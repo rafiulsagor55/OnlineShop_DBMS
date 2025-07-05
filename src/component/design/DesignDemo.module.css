@@ -1,0 +1,47 @@
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  margin: 0;
+  font-family: sans-serif;
+  background: #111;
+  color: white;
+}
+
+.container {
+  display: grid;
+  position: sticky;
+  grid-template-columns: auto 1fr;
+  overflow: hidden;
+  margin-top: 56px;
+  height: calc(100vh - 56px);
+  transition: all 0.3s ease;
+}
+.outletWrapper {
+  overflow-y: auto;
+  height: 100vh;
+  padding: 20px;
+  scroll-behavior: smooth;
+
+  /* Optional but improves mobile scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar for WebKit browsers (Chrome, Edge, Safari) */
+.outletWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.outletWrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.outletWrapper::-webkit-scrollbar-thumb {
+  background: #626161;
+  border-radius: 4px;
+}
+
+.outletWrapper::-webkit-scrollbar-thumb:hover {
+  background: #3b3a3a;
+}

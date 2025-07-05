@@ -1,0 +1,141 @@
+import React, { useState } from "react";
+import styles from "./Login.module.css";
+import { Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add your form submission logic here
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      // setError("Invalid credentials"); // Uncomment to show error
+    }, 1500);
+  };
+
+  const handleSuccess = (credentialResponse) => {
+    const token = credentialResponse.credential;
+    setIsLoading(true);
+    fetch("http://localhost:8080/api/auth/google-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ token }),
+    }).then((res) => {
+      setIsLoading(false);
+      if (res.ok) {
+        alert("Login Success");
+        window.location.reload();
+      } else {
+        setError("Google login failed. Please try again.");
+      }
+    }).catch(() => {
+      setIsLoading(false);
+      setError("Network error. Please try again.");
+    });
+  };
+
+  return (
+    <div className={styles.body}>
+      <div className={styles.backgroundAnimation}></div>
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h2>Welcome Back</h2>
+            <p>Sign in to continue to your account</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {error && <div className={styles.errorMessage}>{error}</div>}
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="email">Email</label>
+              <div className={styles.inputContainer}>
+                <FiMail className={styles.inputIcon} />
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">Password</label>
+              <div className={styles.inputContainer}>
+                <FiLock className={styles.inputIcon} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+              <div className={styles.forgotPassword}>
+                <Link to="/forgot-password">Forgot password?</Link>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className={styles.spinner}></span>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+
+            <div className={styles.divider}>
+              <span>OR</span>
+            </div>
+
+            <GoogleOAuthProvider clientId="421406248780-c6pukobh1dr5blgsa7u4ee7l3luml5iu.apps.googleusercontent.com">
+              <div className={styles.googleButton}>
+                <GoogleLogin
+                  onSuccess={handleSuccess}
+                  onError={() => setError("Google login failed")}
+                  useOneTap
+                  text="continue_with"
+                  // theme="filled_blue"
+                  size="large"
+                  width="100%"
+                />
+              </div>
+            </GoogleOAuthProvider>
+
+            <div className={styles.registerLink}>
+              Don't have an account? <Link to="/register1">Sign up</Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

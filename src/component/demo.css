@@ -1,0 +1,14 @@
+.demo {
+    height: 95vh;
+    width: 100%;
+    background: linear-gradient(135deg, #0d4238, #586c90);
+}
+
+.demo-page {
+    font-family: 'Arial', sans-serif;
+    color: #fff; 
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

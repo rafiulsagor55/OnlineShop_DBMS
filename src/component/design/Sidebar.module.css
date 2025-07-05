@@ -1,0 +1,49 @@
+.sidebar {
+  width: 220px;
+  background: #1a1a1a;
+  padding: 10px;
+  transition: width 0.3s ease, padding 0.3s ease;
+  overflow: auto;
+}
+
+.hidden {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link {
+  display: block;
+  padding: 5px 6px;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s, padding-left 0.3s;
+}
+
+.icon{
+  font-size: 30px;
+  margin-right: 5px;
+}
+
+.link:hover {
+  background: #333;
+  padding-left: 9px;
+}
+
+.active {
+  background: #444;
+  font-weight: bold;
+  padding-left: 9px;
+  border-left: 4px solid rgba(8, 170, 38, 0.861);
+  /* border-radius: 10%; */
+}
+
+
+

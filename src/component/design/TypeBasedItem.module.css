@@ -1,0 +1,226 @@
+/* Card Layout */
+.conteiner {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 60px;
+}
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.title {
+  margin-left: 27px;
+  margin-bottom: 10px;
+  position: sticky;
+}
+
+.customCard {
+  width: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.customCard:hover {
+  transform: scale(1.03);
+}
+
+.cardImageContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cardImageContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardRating {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background-color: rgba(255, 217, 0, 0.976);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+}
+
+.cardContent {
+  padding: 16px 12px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  transition: background-color 0.3s ease;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow-x: auto;
+  text-overflow: unset;
+  scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none;      /* IE 10+ */
+}
+
+.cardTitle::-webkit-scrollbar {
+  display: none;                 /* Chrome, Safari */
+}
+
+
+.cardtype{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+  flex-wrap: nowrap;
+  font-weight: 500;
+}
+.cardBrand {
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+  font-weight: 500;
+}
+
+
+.cardPriceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.cardPrice {
+  font-size: 15px;
+  font-weight: 700;
+  color: #d32f2f;
+  margin-right: 6px;
+}
+
+.cardOriginalPrice {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 4px;
+}
+
+.cardDiscount {
+  font-size: 12px;
+  font-weight: 600;
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 2px 6px;
+  border-radius: 12px;
+}
+
+
+/* Filter Styles */
+.filterContainer {
+  color: white;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 99%;
+  margin: auto;
+}
+
+.optionGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #e0e0e0;
+  margin-right: 12px;
+  min-width: 100px;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1;
+}
+
+.optionButton {
+  background-color: #1e1e1e;
+  border: 1px solid #3a3a3a;
+  color: #cfcfcf;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px transparent;
+}
+
+.optionButton:hover {
+  background-color: #2a2a2a;
+  border-color: #555;
+  box-shadow: inset 0 0 0 1px #666;
+}
+
+.active {
+  background-color: #ffffff;
+  color: #121212;
+  font-weight: bold;
+  border-color: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .filterContainer {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .label {
+    font-size: 16px;
+    margin-bottom: 4px;
+    min-width: 0;
+  }
+
+  .optionGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .optionButton {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}

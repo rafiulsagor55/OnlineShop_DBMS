@@ -1,0 +1,577 @@
+/* Main Container */
+.orderTrackingContainer {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  color: white;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.loading, .noOrders {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: var(--gray);
+}
+
+/* Search Container */
+.searchContainer {
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--gray-light);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+}
+
+/* Orders List */
+.ordersList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.orderCard {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--gray-light);
+}
+
+.orderCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary);
+}
+
+.orderCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.orderCardHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--dark);
+}
+
+.statusBadge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusBadge.processing {
+  background-color: #FFF4E5;
+  color: #FF9500;
+}
+
+.statusBadge.shipped {
+  background-color: #E1F0FF;
+  color: #0062FF;
+}
+
+.statusBadge.delivered {
+  background-color: #E6F7EE;
+  color: #00A651;
+}
+
+.orderCardDetails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-size: 14px;
+  color: black;
+  margin-bottom: 15px;
+}
+
+.orderCardDetails div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detailLabel {
+  font-size: 15px;
+  color: black;
+  margin-bottom: 3px;
+}
+
+.trackingInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--primary);
+  padding-top: 15px;
+  border-top: 1px solid var(--gray-light);
+  margin-top: 15px;
+}
+
+/* Modal Styles (same as your existing styles) */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.orderDetailModal {
+  background-color: white;
+  border-radius: var(--border-radius);
+  width: 75%;
+  height: 90%;
+  overflow-x: hidden;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid var(--gray-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  color: var(--dark);
+  font-weight: 600;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.closeModal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--gray);
+  transition: var(--transition);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.closeModal:hover {
+  background-color: var(--gray-light);
+  color: var(--dark);
+}
+
+.modalContent {
+  padding: 20px;
+}
+
+/* Status Timeline */
+.statusTimeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+
+.statusTimeline::before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--gray-light);
+  z-index: 1;
+}
+
+.timelineStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.timelineStep.completed::before {
+  background-color: var(--primary);
+}
+
+.timelineStep::before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  width: 100%;
+  height: 2px;
+  background-color: var(--gray-light);
+  left: 50%;
+}
+
+.timelineStep:last-child::before {
+  display: none;
+}
+
+.stepIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--gray-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: var(--gray);
+  font-size: 20px;
+  z-index: 100;
+}
+
+.timelineStep.completed .stepIcon {
+  background-color: var(--primary);
+  color: white;
+}
+.timelineStep.incompleted .stepIcon {
+  background-color: red;
+  color: white;
+}
+.stepContent {
+  text-align: center;
+}
+
+.stepContent h4 {
+  font-size: 14px;
+  color: var(--dark);
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.stepContent p {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.tracking {
+  font-size: 12px !important;
+  margin-top: 5px !important;
+}
+
+.tracking span {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Order Details Grid */
+.orderDetailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.detailSection {
+  background-color: var(--gray-light);
+  border-radius: var(--border-radius);
+  padding: 20px;
+}
+
+.detailSection h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: var(--dark);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.detailSection.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.detailLabel {
+  font-weight: 500;
+  color: var(--gray);
+  font-size: 15px;
+}
+
+.detailValue {
+  font-weight: 500;
+  color: var(--dark);
+  text-align: right;
+  font-size: 15px;
+  max-width: 60%;
+}
+
+.detailValue.paid {
+  color: var(--success);
+}
+
+.detailValue.cod {
+  color: var(--warning);
+}
+
+.detailValue.pending {
+  color: var(--danger);
+}
+
+/* Items Table */
+.itemsTableContainer {
+  overflow-x: auto;
+}
+
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 600px;
+}
+
+.itemsTable th {
+  text-align: left;
+  padding: 12px 15px;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--gray);
+  font-weight: 600;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.itemsTable td {
+  padding: 12px 15px;
+  color: var(--gray);
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.itemsTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Order Summary */
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--dark);
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--gray-light);
+}
+
+/* Order Actions */
+.actionButtonGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  background-color: white;
+  border: 1px solid var(--gray-light);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--dark);
+}
+
+.actionButton:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.actionButton svg {
+  font-size: 16px;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .orderDetailsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .ordersList {
+    grid-template-columns: 1fr;
+  }
+  
+  .orderDetailModal {
+    width: 90%;
+  }
+  
+  .statusTimeline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  
+  .statusTimeline::before {
+    display: none;
+  }
+  
+  .timelineStep {
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .timelineStep::before {
+    display: none;
+  }
+  
+  .stepContent {
+    text-align: left;
+  }
+}
+
+/* Add these to your existing CSS */
+
+/* Status Badge Colors */
+.statusBadge.success {
+  background-color: #E6F7EE;
+  color: #00A651;
+}
+
+.statusBadge.info {
+  background-color: #E1F0FF;
+  color: #0062FF;
+}
+
+.statusBadge.warning {
+  background-color: #FFF4E5;
+  color: #FF9500;
+}
+
+.statusBadge.danger {
+  background-color: #FFEBEE;
+  color: #F44336;
+}
+
+.statusBadge.default {
+  background-color: #F5F5F5;
+  color: #757575;
+}
+
+/* Pickup Timeline Specific Styles */
+.pickupTimeline .stepIcon {
+  background-color: #F3E5F5;
+  color: #9C27B0;
+}
+
+.pickupTimeline .completed .stepIcon {
+  background-color: #9C27B0;
+  color: white;
+}
+
+/* Notification Banner */
+.notificationBanner {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+  padding: 12px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Pickup Info in Order Card */
+.pickupInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #9C27B0;
+  padding-top: 15px;
+  border-top: 1px solid var(--gray-light);
+  margin-top: 15px;
+}
+
+@media (max-width: 576px) {
+  .orderDetailModal {
+    width: 95%;
+    max-height: 90%;
+  }
+  
+  .actionButtonGroup {
+    flex-direction: column;
+  }
+  
+  .actionButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

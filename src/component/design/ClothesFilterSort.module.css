@@ -1,0 +1,92 @@
+/* ClothesFilterSort.module.css */
+
+.filterContainer {
+  /* background-color: #121212; */
+  color: white;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6); */
+  width: 99%;
+  margin: auto;
+  /* margin-top: 10px; */
+}
+
+.optionGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #e0e0e0;
+  letter-spacing: 0.5px;
+  margin-right: 12px;
+  white-space: nowrap;
+  min-width: 100px; /* Ensures vertical alignment start point */
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1;
+}
+
+.optionButton {
+  background-color: #1e1e1e;
+  border: 1px solid #3a3a3a;
+  color: #cfcfcf;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px transparent;
+}
+
+.optionButton:hover {
+  background-color: #2a2a2a;
+  border-color: #555;
+  box-shadow: inset 0 0 0 1px #666;
+}
+
+.active {
+  background-color: linear-gradient(135deg, #ffffff, #dddddd);
+  background-color: #ffffff;
+  color: #121212;
+  font-weight: bold;
+  border-color: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .filterContainer {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .label {
+    font-size: 16px;
+    margin-bottom: 4px;
+    min-width: 0;
+  }
+
+  .optionGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .optionButton {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}

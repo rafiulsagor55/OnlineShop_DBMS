@@ -1,0 +1,194 @@
+.section {
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  margin-bottom: 10px;
+}
+
+.scrollContainer {
+  position: relative;
+}
+
+.cardRow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 300px;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+.customCard {
+  width: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.customCard:hover {
+  transform: scale(1.03);
+}
+
+.cardImageContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cardImageContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardRating {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background-color: rgba(255, 217, 0, 0.976);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+}
+
+.cardContent {
+  padding: 16px 12px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  transition: background-color 0.3s ease;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow-x: auto;
+  text-overflow: unset;
+  scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none;      /* IE 10+ */
+}
+
+.cardTitle::-webkit-scrollbar {
+  display: none;                 /* Chrome, Safari */
+}
+.cardtype{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+  flex-wrap: nowrap;
+  font-weight: 500;
+}
+
+.cardBrand {
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+  font-weight: 500;
+}
+
+.cardPriceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.cardPrice {
+  font-size: 15px;
+  font-weight: 700;
+  color: #d32f2f;
+  margin-right: 6px;
+}
+
+.cardOriginalPrice {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 4px;
+}
+
+.cardDiscount {
+  font-size: 12px;
+  font-weight: 600;
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 2px 6px;
+  border-radius: 12px;
+}
+
+
+
+.cardRow::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollArrow {
+  position: absolute;
+  top: 40%;
+  /* transform: translateY(-50%); */
+  background: rgba(0, 0, 0, 0.889);
+  border: 2px solid white;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  z-index: 2;
+  padding-top: 0px;
+  padding-bottom: 8px;
+  border-radius: 50%;
+  transition: background 0.3s;
+  display: none;
+}
+
+.scrollLeft {
+  left: 0;
+}
+
+.scrollRight {
+  right: 0;
+}
+
+.card {
+  background: #2c2c2c;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.card span {
+  margin-top: 8px;
+  color: #ffcc00;
+  font-weight: bold;
+}
