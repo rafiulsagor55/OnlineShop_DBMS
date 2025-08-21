@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import styles from "./ScrollSection.module.css";
-import sagorImage from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (5).png";
+import sagorImage from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (12).png";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
 // import sagorImage1 from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/sagor1.jpg";
