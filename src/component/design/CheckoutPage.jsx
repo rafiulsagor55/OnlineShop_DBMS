@@ -8,6 +8,7 @@ import Notification from './Notification';
 const CheckoutPage = () => {
   const location = useLocation();
   const initialCartItems = location.state?.cartItems || [];
+  console.log("CheckoutPage initialCartItems:", initialCartItems);
 
   const [showNotification, setShowNotification] = useState(false);
     const [notificationMessage, setNotificationMessage] = useState("");
@@ -48,7 +49,7 @@ const CheckoutPage = () => {
   const orderData = {
     id: '',
     date:'',
-    status: '', // Or set based on your business logic
+    status: '', 
     customer: formData.name,
     email: formData.email,
     contact: formData.phone,
@@ -123,10 +124,10 @@ const CheckoutPage = () => {
         />
       )}
       <div className={styles.header}>
-        <Link to="/cartPage" className={styles.backButton}>
+        {/* <Link to="/cartPage" className={styles.backButton}>
           <MdArrowBack className={styles.backIcon} />
           Back to Cart
-        </Link>
+        </Link> */}
         <h1 className={styles.checkoutTitle}>Secure Checkout</h1>
       </div>
 
@@ -143,7 +144,7 @@ const CheckoutPage = () => {
             <div className={styles.emptyCart}>
               <div className={styles.emptyIllustration}></div>
               <p>Your cart is empty</p>
-              <Link to="/products" className={styles.continueShopping}>
+              <Link to="/" className={styles.continueShopping}>
                 Continue Shopping
               </Link>
             </div>
@@ -354,12 +355,12 @@ const CheckoutPage = () => {
                     </div>
                   </div>
                 </label>
-                <label className={`${styles.radioOption} ${formData.paymentMethod === 'Bkash' ? styles.active : ''}`}>
+                {/* <label className={`${styles.radioOption} ${formData.paymentMethod === 'bKash' ? styles.active : ''}`}>
                   <input
                     type="radio"
                     name="paymentMethod"
-                    value="Bkash"
-                    checked={formData.paymentMethod === 'Bkash'}
+                    value="bKash"
+                    checked={formData.paymentMethod === 'bKash'}
                     onChange={handleChange}
                     className={styles.radioInput}
                   />
@@ -372,7 +373,7 @@ const CheckoutPage = () => {
                       <span className={styles.optionSubtitle}>Send payment to 015XXXXXXXX</span>
                     </div>
                   </div>
-                </label>
+                </label> */}
               </div>
             </div>
 

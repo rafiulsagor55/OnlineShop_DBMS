@@ -1,3 +1,4 @@
+/* Existing styles unchanged */
 .pageWrapper {
   padding: 2rem;
   font-family: 'Noto Sans Bengali', sans-serif;
@@ -34,8 +35,8 @@
   cursor: pointer;
 }
 
-.mainImage:hover{
-    transform: scale(1.05);
+.mainImage:hover {
+  transform: scale(1.05);
 }
 
 .thumbnailRow {
@@ -73,7 +74,6 @@
 
 .title {
   font-size: 2rem;
-  /* margin-bottom: 0.2rem; */
 }
 
 .description {
@@ -175,11 +175,12 @@
   font-weight: bold;
 }
 
-.delivery{
+.delivery {
   margin-top: 1rem;
   font-size: 0.95rem;
   color: #444;
 }
+
 .trust,
 .share {
   margin-top: .2rem;
@@ -201,10 +202,10 @@
   margin-top: 2rem;
   padding: 1rem;
   border-radius: 8px;
-  
 }
-.subReviewSection{
- height: 800px;
+
+.subReviewSection {
+  max-height: 800px;
   overflow: auto;
 }
 
@@ -217,20 +218,80 @@
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
-  flex-wrap: wrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #06a306 #f5f7fa;
+}
+
+.relatedGrid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.relatedGrid::-webkit-scrollbar-track {
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+
+.relatedGrid::-webkit-scrollbar-thumb {
+  background: #06a306;
+  border-radius: 4px;
+}
+
+.relatedGrid::-webkit-scrollbar-thumb:hover {
+  background: #037119;
 }
 
 .relatedItem {
-  background: #c0b3b3;
+  background: #fff;
   padding: 1rem;
-  border-radius: 8px;
-  flex: 1;
+  border-radius: 12px;
+  flex: 0 0 250px;
   text-align: center;
-  box-shadow: 0 1px 5px rgba(126, 118, 118, 0.811);
-  min-width: 120px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid transparent;
+  background-image: linear-gradient(white, white),
+                    linear-gradient(45deg, #06a306, #ff9800);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
 }
-.cartIcon{
- font-size: 25px;
+
+.relatedItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid #06a306;
+}
+
+.relatedItem img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.relatedItem h3 {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+.relatedItem p {
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #06a306;
+  font-weight: bold;
+}
+
+.relatedItem:focus {
+  outline: 2px solid #06a306;
+  outline-offset: 2px;
+}
+
+.cartIcon {
+  font-size: 25px;
 }
 
 .colorOptions {
@@ -248,10 +309,6 @@
   transition: background-color 0.2s ease;
 }
 
-/* .colorButton:hover {
-  background-color: #ddd;
-} */
-
 .activeColor {
   background-color: #06a306;
   color: #fff;
@@ -264,3 +321,245 @@
   margin-right: 2px;
 }
 
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+  .pageWrapper {
+    padding: 1rem;
+  }
+
+  .productContainer {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .imageGallery {
+    padding: 0px;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Changed from center to stretch */
+  }
+
+  .mainImage {
+    width: 100%;
+    /* max-height: 300px; */
+    object-fit: cover; /* Changed to cover for full width */
+  }
+
+  .thumbnailRow {
+    width: 100%;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .thumbnail {
+    width: 70px;
+    height: 70px;
+  }
+
+  .details {
+    min-width: 100%;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  .priceBox {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1rem;
+    gap: 0.5rem;
+  }
+
+  .discountPrice {
+    font-size: 1.2rem;
+  }
+
+  .originalPrice,
+  .discount {
+    font-size: 0.85rem;
+  }
+
+  .rating span {
+    font-size: 16px;
+  }
+
+  .stock {
+    font-size: 0.9rem;
+  }
+
+  .variant select {
+    /* width: 100%; */
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .quantity {
+    flex-direction: row;
+    align-items: flex-start;
+    /* flex-wrap: wrap; */
+    gap: 0.5rem;
+  }
+
+  .qtyControl {
+    width: 100%;
+    /* justify-content: center; */
+  }
+
+  .qtyControl button {
+    padding: 8px 12px;
+    font-size: 1rem;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cartBtn,
+  .buyBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .cartIcon {
+    font-size: 20px;
+  }
+
+  .delivery,
+  .trust,
+  .share {
+    font-size: 0.85rem;
+  }
+
+  .colorOptions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .colorButton {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+
+  .reviewSection {
+    margin-top: 1.5rem;
+    padding: 0.5rem;
+  }
+
+  .subReviewSection {
+    height: 700px;
+  }
+
+  .related {
+    margin-top: 1.5rem;
+  }
+
+  .relatedGrid {
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .relatedItem {
+    flex: 0 0 200px;
+  }
+
+  .relatedItem img {
+    max-height: 150px;
+  }
+
+  .relatedItem h3 {
+    font-size: 0.9rem;
+  }
+
+  .relatedItem p {
+    font-size: 0.8rem;
+  }
+}
+
+/* Extra small screens (below 480px) */
+@media screen and (max-width: 480px) {
+  .pageWrapper {
+    padding: 4px;
+  }
+
+  .productContainer {
+    padding: 4px;
+  }
+
+  .imageGallery {
+    padding: 2px;
+    margin: 2px;
+  }
+
+  .mainImage {
+    width: 100%;
+    /* max-height: 250px; */
+    object-fit: cover; /* Ensure full width coverage */
+    margin: 0;
+    padding: 0;
+    border-radius: 0; /* Remove border radius for edge-to-edge look */
+  }
+
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .description {
+    font-size: 0.8rem;
+  }
+
+  .priceBox {
+    font-size: 0.9rem;
+  }
+
+  .discountPrice {
+    font-size: 1rem;
+  }
+
+  .cartBtn,
+  .buyBtn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .subReviewSection {
+    height: 600px;
+  }
+
+  .relatedGrid {
+    gap: 0.3rem;
+  }
+
+  .relatedItem {
+    flex: 0 0 150px;
+  }
+
+  .relatedItem img {
+    max-height: 120px;
+  }
+
+  .relatedItem h3 {
+    font-size: 0.8rem;
+  }
+
+  .relatedItem p {
+    font-size: 0.7rem;
+  }
+}
+
+.sizeDetails {
+  white-space: pre-line;
+}

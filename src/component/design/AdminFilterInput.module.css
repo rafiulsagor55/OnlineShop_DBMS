@@ -35,7 +35,7 @@
 .page {
   min-height: 100vh;
   padding: 2rem 1rem;
-  background:linear-gradient(135deg, #0d4238, #586c90);
+  /* background:linear-gradient(135deg, #0d4238, #586c90); */
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -43,7 +43,7 @@
 }
 
 .container {
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
   background: white;
   padding: 2.5rem;
@@ -500,9 +500,15 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .page{
+    padding: 0px;
+  }
   .container {
     padding: 1.5rem;
-    width: 95%;
+    width: 100%;
+    margin-bottom: 0px;
+    border-radius: 0%;
+
   }
   
   .filterGrid {

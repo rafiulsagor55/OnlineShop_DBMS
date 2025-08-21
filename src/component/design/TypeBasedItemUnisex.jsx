@@ -46,7 +46,7 @@ const sortOptions = [
   "Discount: High to Low", "Price: Low to High", "Price: High to Low",
 ];
 
-const TypeBasedItemKids = () => {
+const TypeBasedItemUnisex = () => {
   const { searchItem } = useContext(UserContext);
   const [filters, setFilters] = useState({
     category: ["All"],
@@ -69,7 +69,7 @@ const TypeBasedItemKids = () => {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const myString = "Kids";
+        const myString = "Unisex";
         const response = await fetch(`http://localhost:8080/api/filters/get-filters?gender=${encodeURIComponent(myString)}`, {
           method: "GET",
           headers: {
@@ -107,7 +107,7 @@ const TypeBasedItemKids = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/products/get-all-kids-products");
+        const response = await fetch("http://localhost:8080/api/products/get-all-unisex-products");
         const data = await response.json();
         setProducts(data);
         setLoading(false);
@@ -223,14 +223,14 @@ const TypeBasedItemKids = () => {
   if (loading) return <div>Loading...</div>;
 
   // Check if the current path is exactly "/Womens-Wear"
-  const isKidsWearPage = location.pathname === "/Kids-Wear";
+  const isWomensWearPage = location.pathname === "/Unisex-Wear";
 
   return (
     <>
       <Outlet />
-      {isKidsWearPage && (
+      {isWomensWearPage && (
         <div>
-          <h2 className={styles.titleMain}>Kid's Wear</h2>
+          <h2 className={styles.titleMain}>Unisex Wear</h2>
 
           <div className={styles.filterContainer}>
             {/* Desktop Filter and Sort Options */}
@@ -391,4 +391,4 @@ const TypeBasedItemKids = () => {
   );
 };
 
-export default TypeBasedItemKids;
+export default TypeBasedItemUnisex;

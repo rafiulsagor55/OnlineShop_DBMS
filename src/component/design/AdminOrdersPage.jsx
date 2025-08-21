@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AdminOrdersPage.module.css";
-import { TbCoinTaka, TbCoinTakaFilled } from "react-icons/tb";
+import { TbCoinTaka } from "react-icons/tb";
 import {
   FiSearch,
-  FiFilter,
-  FiDownload,
   FiRefreshCw,
-  FiChevronLeft,
   FiChevronRight,
   FiPrinter,
   FiMail,
@@ -14,12 +11,10 @@ import {
 } from "react-icons/fi";
 import { FaRegCheckCircle } from "react-icons/fa";
 import {
-  BsThreeDotsVertical,
   BsCheckCircle,
   BsTruck,
   BsBoxSeam,
   BsBellFill,
-  BsArrowLeftRight,
   BsShop,
   BsGear,
 } from "react-icons/bs";
@@ -30,123 +25,15 @@ import {
   AiOutlineShopping,
 } from "react-icons/ai";
 import {
-  RiMoneyDollarCircleLine,
   RiNotificationBadgeLine,
 } from "react-icons/ri";
 import {
   MdOutlineLocalShipping,
   MdOutlinePayment,
-  MdOutlineEdit,
 } from "react-icons/md";
 
 const AdminOrdersPage = () => {
-  // Sample orders data with pickup and delivery options
-  const initialOrders = [
-    {
-      id: "ORD-2023-001",
-      customer: "John Doe",
-      date: new Date(Date.now() - 86400000 * 2),
-      items: [
-        { id: 1, name: "Cotton T-shirt - Blue (M)", price: 960, quantity: 1 },
-        { id: 2, name: "Jeans - Black (32)", price: 1200, quantity: 1 },
-      ],
-      status: "Order Placed",
-      paymentMethod: "COD",
-      payment: "pending",
-      total: 2160,
-      delivery: "home",
-      address: "123 Main St, Dhaka",
-      contact: "+8801712345678",
-      email: "john.doe@example.com",
-      processedDate: new Date(Date.now() - 86400000 * 1.5),
-      readyDate: new Date(Date.now() - 86400000 * 2),
-      pickedDate: new Date(Date.now() - 86400000 * 1),
-      originalState: null,
-    },
-    {
-      id: "ORD-2023-002",
-      customer: "Sarah Smith",
-      date: new Date(Date.now() - 86400000 * 1),
-      items: [
-        { id: 3, name: "Running Shoes - White (42)", price: 2500, quantity: 1 },
-        { id: 4, name: "Baseball Cap - Red", price: 350, quantity: 2 },
-      ],
-      status: "ready",
-      paymentMethod: "Bkash",
-      payment: "paid",
-      total: 3200,
-      delivery: "pickup",
-      pickupLocation: "Main Store, Gulshan, Dhaka",
-      storeContact: "+8809612345678",
-      contact: "+8801812345678",
-      email: "sarah.smith@example.com",
-      processedDate: new Date(Date.now() - 86400000 * 0.8),
-      readyDate: new Date(Date.now() - 86400000 * 0.5),
-      originalState: null,
-    },
-    {
-      id: "ORD-2023-003",
-      customer: "Michael Johnson",
-      date: new Date(Date.now() - 86400000 * 3),
-      items: [
-        { id: 5, name: "Wireless Earbuds", price: 1800, quantity: 1 },
-        { id: 6, name: "Charger Cable", price: 300, quantity: 2 },
-      ],
-      status: "picked",
-      paymentMethod: "COD",
-      payment: "paid",
-      total: 2400,
-      delivery: "pickup",
-      pickupLocation: "Uttara Branch, Dhaka",
-      contact: "+8801912345678",
-      email: "michael.j@example.com",
-      processedDate: new Date(Date.now() - 86400000 * 2.5),
-      readyDate: new Date(Date.now() - 86400000 * 2),
-      pickedDate: new Date(Date.now() - 86400000 * 1),
-      originalState: null,
-    },
-    {
-      id: "ORD-2023-004",
-      customer: "Emily Wilson",
-      date: new Date(Date.now() - 86400000 * 4),
-      items: [
-        { id: 1, name: "Cotton T-shirt - Blue (M)", price: 960, quantity: 2 },
-      ],
-      status: "delivered",
-      paymentMethod: "COD",
-      payment: "paid",
-      total: 1920,
-      delivery: "home",
-      address: "789 Pine Rd, Sylhet",
-      contact: "+8801612345678",
-      email: "emily.w@example.com",
-      processedDate: new Date(Date.now() - 86400000 * 3.5),
-      shippedDate: new Date(Date.now() - 86400000 * 3),
-      deliveredDate: new Date(Date.now() - 86400000 * 1),
-      tracking: "DHL-123456789",
-      originalState: null,
-    },
-    {
-      id: "ORD-2023-005",
-      customer: "David Brown",
-      date: new Date(Date.now() - 86400000 * 0.5),
-      items: [
-        { id: 3, name: "Running Shoes - White (42)", price: 2500, quantity: 2 },
-      ],
-      status: "processing",
-      paymentMethod: "Bkash",
-      payment: "paid",
-      total: 5000,
-      delivery: "pickup",
-      pickupLocation: "Dhanmondi Branch, Dhaka",
-      contact: "+8801512345678",
-      email: "david.b@example.com",
-      processedDate: new Date(Date.now() - 86400000 * 0.3),
-      originalState: null,
-    },
-  ];
-
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -156,6 +43,60 @@ const AdminOrdersPage = () => {
   const [itemsPerPage] = useState(10);
   const [notification, setNotification] = useState(null);
   const [showActionMenu, setShowActionMenu] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showActionMenu && !event.target.closest(`.${styles.actionMenu}`)) {
+        setShowActionMenu(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showActionMenu]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/get-all-order-item",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error);
+        }
+
+        const data = await response.json();
+        console.log(data);
+        data.forEach((order) => {
+          order.items = order.items || [];
+        });
+        setOrders(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        showNotification(error.message, "error");
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  if (loading) {
+    return <div className={styles.loading}>Loading your orders...</div>;
+  }
 
   const refreshOrders = () => {
     setIsLoading(true);
@@ -172,7 +113,7 @@ const AdminOrdersPage = () => {
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.contact.includes(searchTerm) ||
       order.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -190,10 +131,10 @@ const AdminOrdersPage = () => {
   const updateOrderStatus = (orderId, newStatus) => {
     const updatedOrders = orders.map((order) => {
       if (order.id === orderId) {
-        // Store original state if this is the first modification
         const originalState = order.originalState || {
           status: order.status,
           payment: order.payment,
+          paymentMethod: order.paymentMethod,
           processedDate: order.processedDate,
           readyDate: order.readyDate,
           shippedDate: order.shippedDate,
@@ -210,12 +151,10 @@ const AdminOrdersPage = () => {
           status: newStatus,
         };
 
-        // Update payment status if order is delivered or picked
         if (newStatus === "delivered" || newStatus === "picked") {
-          updatedOrder.payment = "paid";
+          updatedOrder.payment = "Paid";
         }
 
-        // Set dates based on status
         if (newStatus === "shipped") {
           updatedOrder.shippedDate = new Date();
           updatedOrder.tracking = `DHL-${Math.floor(
@@ -229,13 +168,11 @@ const AdminOrdersPage = () => {
           updatedOrder.deliveredDate = new Date();
         } else if (newStatus === "cancelled") {
           updatedOrder.cancelledDate = new Date();
-          // Only show refund if payment was actually made
-          if (order.payment === "paid") {
-            updatedOrder.refundAmount = order.total + (order.delivery === "home" ? 50 : 0);
+          if (order.payment === "Paid") {
+            updatedOrder.refundAmount = order.total + (order.deliveryMethod === "home" ? 50 : 0);
           } else {
             updatedOrder.refundAmount = 0;
           }
-          // Reset other dates for cancelled orders
           updatedOrder.shippedDate = null;
           updatedOrder.readyDate = null;
           updatedOrder.pickedDate = null;
@@ -256,7 +193,6 @@ const AdminOrdersPage = () => {
   const revertToOriginalState = (orderId) => {
     const updatedOrders = orders.map((order) => {
       if (order.id === orderId && order.originalState) {
-        // Revert to original state and clear the originalState
         return {
           ...order,
           ...order.originalState,
@@ -298,7 +234,7 @@ const AdminOrdersPage = () => {
 
   const formatDateTime = (date) => {
     if (!date) return "N/A";
-    return date.toLocaleString("en-US", {
+    return new Date(date).toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -310,7 +246,7 @@ const AdminOrdersPage = () => {
   const formatRelativeTime = (date) => {
     if (!date) return "N/A";
     const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
+    const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
 
     if (diffInSeconds < 60) return "Just now";
     if (diffInSeconds < 3600)
@@ -347,19 +283,6 @@ const AdminOrdersPage = () => {
     showNotification(`Refund processed for order ${selectedOrder.id}`, "info");
     setShowActionMenu(null);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showActionMenu && !event.target.closest(`.${styles.actionMenu}`)) {
-        setShowActionMenu(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showActionMenu]);
 
   const getStatusDisplay = (status) => {
     switch (status) {
@@ -519,6 +442,15 @@ const AdminOrdersPage = () => {
                 <p>{stats.deliveredCount}</p>
               </div>
             </div>
+            <div className={`${styles.card} ${styles.success}`}>
+              <div className={styles.cardIcon}>
+                <FaRegCheckCircle />
+              </div>
+              <div className={styles.cardContent}>
+                <h3>Picked up</h3>
+                <p>{stats.pickedCount}</p>
+              </div>
+            </div>
             <div className={`${styles.card} ${styles.warning}`}>
               <div className={styles.cardIcon}>
                 <AiOutlineClockCircle />
@@ -637,16 +569,16 @@ const AdminOrdersPage = () => {
                               styles[order.payment]
                             }`}
                           >
-                            {order.payment === "paid" ? "Paid" : "Pending"}
+                            {order.payment === "Paid" ? "Paid" : "Pending"}
                           </span>
                         </td>
                         <td>
                           <span
                             className={`${styles.deliveryBadge} ${
-                              styles[order.delivery]
+                              styles[order.deliveryMethod]
                             }`}
                           >
-                            {order.delivery === "home"
+                            {order.deliveryMethod === "home"
                               ? "Home Delivery"
                               : "Pickup from store"}
                           </span>
@@ -711,7 +643,7 @@ const AdminOrdersPage = () => {
             <div className={styles.modalContent}>
               <div
                 className={`${styles.statusTimeline} ${
-                  selectedOrder.delivery === "pickup"
+                  selectedOrder.deliveryMethod === "pickup"
                     ? styles.pickupTimeline
                     : ""
                 }`}
@@ -733,7 +665,11 @@ const AdminOrdersPage = () => {
                     )
                       ? styles.completed
                       : ""
-                  } ${["cancelled"].includes(selectedOrder.status)?styles.incompleted :"" }`}
+                  } ${
+                    ["cancelled"].includes(selectedOrder.status)
+                      ? styles.incompleted
+                      : ""
+                  }`}
                 >
                   <div className={styles.stepIcon}>
                     {selectedOrder.status === "cancelled" ? (
@@ -754,9 +690,9 @@ const AdminOrdersPage = () => {
                           ? formatDateTime(new Date(selectedOrder.cancelledDate))
                           : "N/A"}
                       </p>
-                    ) : ["processing", "ready", "picked", "shipped", "delivered", "cancelled"].includes(
-                      selectedOrder.status
-                    ) ? (
+                    ) : ["processing", "ready", "picked", "shipped", "delivered"].includes(
+                        selectedOrder.status
+                      ) ? (
                       <p>
                         {selectedOrder.processedDate
                           ? formatDateTime(new Date(selectedOrder.processedDate))
@@ -770,7 +706,7 @@ const AdminOrdersPage = () => {
 
                 {selectedOrder.status !== "cancelled" && (
                   <>
-                    {selectedOrder.delivery === "home" ? (
+                    {selectedOrder.deliveryMethod === "home" ? (
                       <>
                         <div
                           className={`${styles.timelineStep} ${
@@ -809,7 +745,7 @@ const AdminOrdersPage = () => {
                             selectedOrder.status === "delivered"
                               ? styles.completed
                               : ""
-                          } `}
+                          }`}
                         >
                           <div className={styles.stepIcon}>
                             <BsCheckCircle />
@@ -883,11 +819,11 @@ const AdminOrdersPage = () => {
                 )}
               </div>
 
-              {selectedOrder.delivery === "pickup" &&
+              {selectedOrder.deliveryMethod === "pickup" &&
                 selectedOrder.status === "ready" && (
                   <div className={styles.notificationBanner}>
                     <BsBellFill /> Order is ready for pickup at{" "}
-                    {selectedOrder.pickupLocation}
+                    {selectedOrder.pickupLocation || "Store"}
                   </div>
                 )}
 
@@ -915,7 +851,7 @@ const AdminOrdersPage = () => {
                         {selectedOrder.contact}
                       </span>
                     </div>
-                    {selectedOrder.delivery === "home" && (
+                    {selectedOrder.deliveryMethod === "home" && (
                       <div className={styles.detailRow}>
                         <span className={styles.detailLabel}>Address:</span>
                         <span className={styles.detailValue}>
@@ -942,7 +878,7 @@ const AdminOrdersPage = () => {
                         Delivery Method:
                       </span>
                       <span className={styles.detailValue}>
-                        {selectedOrder.delivery === "home"
+                        {selectedOrder.deliveryMethod === "home"
                           ? "Home Delivery"
                           : "Store Pickup"}
                       </span>
@@ -966,13 +902,13 @@ const AdminOrdersPage = () => {
                           styles[selectedOrder.payment]
                         }`}
                       >
-                        {selectedOrder.payment === "paid" ? "Paid" : "Pending"}
+                        {selectedOrder.payment === "Paid" ? "Paid" : "Pending"}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {selectedOrder.delivery === "pickup" && (
+                {selectedOrder.deliveryMethod === "pickup" && (
                   <div className={styles.detailSection}>
                     <h3>
                       <BsShop /> Pickup Information
@@ -981,7 +917,7 @@ const AdminOrdersPage = () => {
                       <div className={styles.detailRow}>
                         <span className={styles.detailLabel}>Store:</span>
                         <span className={styles.detailValue}>
-                          {selectedOrder.pickupLocation}
+                          {selectedOrder.pickupLocation || "Store"}
                         </span>
                       </div>
                       <div className={styles.detailRow}>
@@ -1010,6 +946,8 @@ const AdminOrdersPage = () => {
                       <thead>
                         <tr>
                           <th>Product</th>
+                          <th>Color</th>
+                          <th>Size</th>
                           <th>Price</th>
                           <th>Qty</th>
                           <th>Total</th>
@@ -1017,8 +955,10 @@ const AdminOrdersPage = () => {
                       </thead>
                       <tbody>
                         {selectedOrder.items.map((item) => (
-                          <tr key={item.id}>
+                          <tr key={item.item_id}>
                             <td>{item.name}</td>
+                            <td>{item.color || "N/A"}</td>
+                            <td>{item.size || "N/A"}</td>
                             <td>৳{item.price}</td>
                             <td>{item.quantity}</td>
                             <td>৳{item.price * item.quantity}</td>
@@ -1041,25 +981,27 @@ const AdminOrdersPage = () => {
                     <div className={styles.summaryRow}>
                       <span>Delivery Charge:</span>
                       <span>
-                        ৳{selectedOrder.delivery === "home" ? "50" : "0"}
+                        ৳{selectedOrder.deliveryMethod === "home" ? "50" : "0"}
                       </span>
                     </div>
-                    {selectedOrder.status === "cancelled" && selectedOrder.payment === "paid" && (
-                      <div className={styles.summaryRow}>
-                        <span>Refund Amount:</span>
-                        <span>
-                          -৳
-                          {selectedOrder.refundAmount || 
-                            (selectedOrder.total + (selectedOrder.delivery === "home" ? 50 : 0))}
-                        </span>
-                      </div>
-                    )}
+                    {selectedOrder.status === "cancelled" &&
+                      selectedOrder.payment === "Paid" && (
+                        <div className={styles.summaryRow}>
+                          <span>Refund Amount:</span>
+                          <span>
+                            -৳
+                            {selectedOrder.refundAmount ||
+                              (selectedOrder.total +
+                                (selectedOrder.deliveryMethod === "home" ? 50 : 0))}
+                          </span>
+                        </div>
+                      )}
                     <div className={styles.summaryTotal}>
                       <span>Total:</span>
                       <span>
                         ৳
                         {selectedOrder.total +
-                          (selectedOrder.delivery === "home" ? 50 : 0)}
+                          (selectedOrder.deliveryMethod === "home" ? 50 : 0)}
                       </span>
                     </div>
                   </div>
@@ -1082,7 +1024,7 @@ const AdminOrdersPage = () => {
                           <>
                             <option value="Order Placed">New Order</option>
                             <option value="processing">Processing</option>
-                            {selectedOrder.delivery === "home" ? (
+                            {selectedOrder.deliveryMethod === "home" ? (
                               <>
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
@@ -1115,14 +1057,15 @@ const AdminOrdersPage = () => {
                       >
                         <FiMail /> Email
                       </button>
-                      {selectedOrder.status === "cancelled" && selectedOrder.payment === "paid" && (
-                        <button
-                          className={styles.actionButton}
-                          onClick={handleProcessRefund}
-                        >
-                          <FiDollarSign /> Refund
-                        </button>
-                      )}
+                      {selectedOrder.status === "cancelled" &&
+                        selectedOrder.payment === "Paid" && (
+                          <button
+                            className={styles.actionButton}
+                            onClick={handleProcessRefund}
+                          >
+                            <FiDollarSign /> Refund
+                          </button>
+                        )}
                       {selectedOrder.originalState && (
                         <button
                           className={styles.actionButton}

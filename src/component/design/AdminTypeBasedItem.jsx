@@ -1,7 +1,6 @@
-import React, { useMemo, useState, useEffect, useContext } from "react";
-import styles from "./TypeBasedItem.module.css";
-import { Link, Outlet, useLocation } from "react-router-dom"; // Add useLocation
-import { UserContext } from "../UserContext";
+import React, { useMemo, useState, useEffect } from "react";
+import styles from "./AdminTypeBasedItem.module.css";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const filterOptions = {
   category: [
@@ -46,8 +45,7 @@ const sortOptions = [
   "Discount: High to Low", "Price: Low to High", "Price: High to Low",
 ];
 
-const TypeBasedItemKids = () => {
-  const { searchItem } = useContext(UserContext);
+const AdminTypeBasedItem = () => {
   const [filters, setFilters] = useState({
     category: ["All"],
     type: ["All"],
@@ -64,12 +62,16 @@ const TypeBasedItemKids = () => {
   const [sortBy, setSortBy] = useState("Customer Rating");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const location = useLocation(); // Get current location
+  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const myString = "Kids";
+        const myString = "Male";
         const response = await fetch(`http://localhost:8080/api/filters/get-filters?gender=${encodeURIComponent(myString)}`, {
           method: "GET",
           headers: {
@@ -104,21 +106,44 @@ const TypeBasedItemKids = () => {
     fetchFilters();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/products/get-all-kids-products");
-        const data = await response.json();
-        setProducts(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/products/get-all-mens-products");
+      const data = await response.json();
+      setProducts(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchProducts();
   }, []);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/products/delete/${selectedProductId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to delete product");
+      }
+
+      setShowModal(false);
+      setSelectedProductId(null);
+      fetchProducts(); // Refetch products after deletion
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
   const getNumericRange = (range) => {
     if (range.includes("+")) return [parseInt(range), Infinity];
@@ -126,15 +151,16 @@ const TypeBasedItemKids = () => {
     return parts ? [parseInt(parts[0]), parseInt(parts[1])] : [0, Infinity];
   };
 
-  const filterCards = (cards, filters, searchItem = "") => {
+  const filterCards = (cards, filters, search = "") => {
     return cards.filter((card) => {
-      if (searchItem) {
-        const searchLower = searchItem.toLowerCase();
+      if (search) {
+        const searchLower = search.toLowerCase();
         if (
           !card.name.toLowerCase().includes(searchLower) &&
           !card.type.toLowerCase().includes(searchLower) &&
           !card.brand.toLowerCase().includes(searchLower) &&
-          !card.id.toLowerCase().includes(searchLower)
+          !card.id.toLowerCase().includes(searchLower) &&
+          !card.category.toLowerCase().includes(searchLower)
         ) {
           return false;
         }
@@ -203,8 +229,8 @@ const TypeBasedItemKids = () => {
   };
 
   const filtered = useMemo(
-    () => sortCards(filterCards(products, filters, searchItem), sortBy),
-    [filters, sortBy, products, searchItem]
+    () => sortCards(filterCards(products, filters, search), sortBy),
+    [filters, sortBy, products, search]
   );
 
   const toggleFilter = (category, value) => {
@@ -222,15 +248,24 @@ const TypeBasedItemKids = () => {
 
   if (loading) return <div>Loading...</div>;
 
-  // Check if the current path is exactly "/Womens-Wear"
-  const isKidsWearPage = location.pathname === "/Kids-Wear";
+  const isAdminMensWearPage = location.pathname === "/admin/mens-wear";
 
   return (
-    <>
+    <div>
       <Outlet />
-      {isKidsWearPage && (
+      {isAdminMensWearPage && (
         <div>
-          <h2 className={styles.titleMain}>Kid's Wear</h2>
+          <h2 className={styles.titleMain}>Admin Men's Wear</h2>
+
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              placeholder="Search by name, type, brand, or ID"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
 
           <div className={styles.filterContainer}>
             {/* Desktop Filter and Sort Options */}
@@ -343,52 +378,88 @@ const TypeBasedItemKids = () => {
             </div>
           </div>
 
-          <br />
-
           <div className={styles.conteiner}>
             {filtered.map((card) => (
-              <Link
-                to={`${card.id}`}
-                state={{ id: `${card.id}` }}
-                className={styles.cardLink}
-                key={card.id}
-              >
-                <div className={styles.customCard}>
-                  <div className={styles.cardImageContainer}>
-                    <img 
-                      src={`${card.imageData}`} 
-                      alt="Product" 
-                    />
-                    <div className={styles.cardRating}>★ {card.rating}</div>
+              <div className={styles.customCard} key={card.id}>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle} title={card.name}>{card.name}</h3>
+                  <div className={styles.cardtype}>
+                    <span>Type: {card.type}</span>
+                    <span className={styles.cardBrand}>Brand: {card.brand}</span>
                   </div>
-                  <div className={styles.cardContent}>
-                    <h3 className={styles.cardTitle} title={card.name}>{card.name}</h3>
-                    <div className={styles.cardtype}>
-                      <span>Type: {card.type}</span>
-                      <span className={styles.cardBrand}>Brand: {card.brand}</span>
-                    </div>
-                    <div className={styles.cardPriceRow}>
-                      <div>
-                        <span className={styles.cardPrice}>৳{(card.price * (1 - card.discount / 100)).toFixed(0)}</span>
-                        {card.discount > 0 && (
-                          <span className={styles.cardOriginalPrice}>৳{card.price}</span>
-                        )}
-                      </div>
+                  <div className={styles.cardPriceRow}>
+                    <div>
+                      <span className={styles.cardPrice}>৳{(card.price * (1 - card.discount / 100)).toFixed(0)}</span>
                       {card.discount > 0 && (
-                        <span className={styles.cardDiscount}>
-                          Save ৳{card.price - (card.price * (1 - card.discount / 100)).toFixed(0)} ({card.discount}% OFF)
-                        </span>
+                        <span className={styles.cardOriginalPrice}>৳{card.price}</span>
                       )}
                     </div>
+                    {card.discount > 0 && (
+                      <span className={styles.cardDiscount}>
+                        Save ৳{card.price - (card.price * (1 - card.discount / 100)).toFixed(0)} ({card.discount}% OFF)
+                      </span>
+                    )}
                   </div>
+                  <div className={styles.cardRating}>★ {card.rating}</div>
                 </div>
-              </Link>
+                <div className={styles.adminActions}>
+                  <button
+                    className={styles.viewButton}
+                    onClick={() => navigate(`${card.id}`, { state: { id: card.id } })}
+                  >
+                    View
+                  </button>
+                  <button
+                    className={styles.editButton}
+                    onClick={() => navigate(`edit/${card.id}`)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => {
+                      setSelectedProductId(card.id);
+                      setShowModal(true);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
+
+          {showModal && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modalContent}>
+                <h2 className={styles.modalTitle}>Confirm Deletion</h2>
+                <p className={styles.modalMessage}>
+                  Are you sure you want to delete this product? This action cannot be undone.
+                </p>
+                <div className={styles.modalActions}>
+                  <button
+                    className={styles.modalCancelButton}
+                    onClick={() => {
+                      setShowModal(false);
+                      setSelectedProductId(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className={styles.modalConfirmButton}
+                    onClick={handleDelete}
+                  >
+                    Confirm Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-export default TypeBasedItemKids;
+export default AdminTypeBasedItem;

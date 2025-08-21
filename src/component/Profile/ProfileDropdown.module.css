@@ -1,4 +1,4 @@
-/* Existing Styles - Unchanged */
+/* Existing Styles - Unchanged for Desktop */
 .profileContainer {
   position: relative;
   margin-left: 20px;
@@ -426,4 +426,121 @@
 .editButton:hover {
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 20px rgba(102,126,234,0.4) !important;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .profileContainer {
+    margin-left: 8px;
+  }
+
+  .profileTrigger {
+    padding: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+  }
+
+  .profileTrigger:hover {
+    background-color: transparent;
+  }
+
+  .profileTrigger.active {
+    background-color: transparent;
+  }
+
+  .profileImage {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .userName {
+    display: none; /* Hide user name */
+  }
+
+  .chevron {
+    display: none; /* Hide chevron */
+  }
+
+  .dropdownMenu {
+    top: 36px;
+    width: 250px;
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .profileHeader {
+    padding: 15px;
+  }
+
+  .headerImage {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+
+  .userInfo h3 {
+    font-size: 14px;
+  }
+
+  .userInfo p {
+    font-size: 12px;
+  }
+
+  .menuSection {
+    padding: 8px 4px;
+  }
+
+  .sectionTitle {
+    padding: 6px 15px;
+    font-size: 10px;
+  }
+
+  .menuItem {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+
+  .menuIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+
+  .divider {
+    margin: 6px 0;
+  }
+
+  .logoutItem {
+    margin-bottom: 8px;
+  }
+
+  .profileSkeleton {
+    width: 28px;
+    height: 28px;
+  }
+
+  .profileModalContent {
+    max-width: 90%;
+  }
+
+  .imageWrapper {
+    width: 160px;
+    height: 160px;
+  }
+
+  .profileModalBody {
+    padding: 15px 20px 20px;
+  }
+
+  .profileModalHeader h2 {
+    font-size: 20px;
+  }
+
+  .editButton {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
 }

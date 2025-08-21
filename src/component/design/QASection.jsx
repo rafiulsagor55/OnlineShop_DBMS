@@ -6,54 +6,6 @@ import { BiSolidLike } from "react-icons/bi";
 import { BiSolidDislike } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-// Simulated API data
-const fetchQuestions = () =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: 1,
-          userId: "user1",
-          user: "Ayesha",
-          isVerified: true,
-          date: "2024-09-12",
-          question: "Is this product waterproof?",
-          helpful: 4,
-          answers: [
-            {
-              id: 101,
-              userId: "support1",
-              user: "Support Team",
-              isVerified: true,
-              role: "admin",
-              text: "Yes, it is rated IPX6 waterproof.",
-              helpful: 2,
-            },
-            {
-              id: 102,
-              userId: "user2",
-              user: "Kamal",
-              isVerified: false,
-              role: "user",
-              text: "I've used it in rain, works fine!",
-              helpful: 3,
-            },
-          ],
-        },
-        {
-          id: 2,
-          userId: "user3",
-          user: "Raju",
-          isVerified: true,
-          date: "2024-08-01",
-          question: "Does it come with a warranty?",
-          helpful: 2,
-          answers: [],
-        },
-      ]);
-    }, 800);
-  });
-
 const ConfirmationDialog = ({ message, onConfirm, onCancel }) => {
   return (
     <div className={styles.confirmationDialogOverlay}>
@@ -72,42 +24,11 @@ const ConfirmationDialog = ({ message, onConfirm, onCancel }) => {
   );
 };
 
-const AnswerCard = ({ answer, onHelpfulClick, onDelete, currentUserId }) => {
-  const [isHelpful, setIsHelpful] = useState(false);
-  const [isDisliked, setIsDisliked] = useState(false);
-  const [helpfulCount, setHelpfulCount] = useState(answer.helpful || 0);
-  const [dislikeCount, setDislikeCount] = useState(answer.dislike || 0);
+const AnswerCard = ({ answer, onVote, onDelete, currentUserEmail }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const handleHelpfulClick = () => {
-    if (isHelpful) {
-      setIsHelpful(false);
-      setHelpfulCount((prev) => prev - 1);
-      onHelpfulClick(answer.id, helpfulCount - 1);
-    } else {
-      if (isDisliked) {
-        setIsDisliked(false);
-        setDislikeCount((prev) => prev - 1);
-      }
-      setIsHelpful(true);
-      setHelpfulCount((prev) => prev + 1);
-      onHelpfulClick(answer.id, helpfulCount + 1);
-    }
-  };
-
-  const handleDislikeClick = () => {
-    if (isDisliked) {
-      setIsDisliked(false);
-      setDislikeCount((prev) => prev - 1);
-    } else {
-      if (isHelpful) {
-        setIsHelpful(false);
-        setHelpfulCount((prev) => prev - 1);
-        onHelpfulClick(answer.id, helpfulCount - 1);
-      }
-      setIsDisliked(true);
-      setDislikeCount((prev) => prev + 1);
-    }
+  const handleVote = (voteType) => {
+    onVote("answer", answer.id, voteType);
   };
 
   const handleDeleteClick = () => {
@@ -115,7 +36,7 @@ const AnswerCard = ({ answer, onHelpfulClick, onDelete, currentUserId }) => {
   };
 
   const confirmDelete = () => {
-    onDelete(answer.id);
+    onDelete("answer", answer.id);
     setShowDeleteConfirm(false);
   };
 
@@ -123,7 +44,9 @@ const AnswerCard = ({ answer, onHelpfulClick, onDelete, currentUserId }) => {
     setShowDeleteConfirm(false);
   };
 
-  const canDelete = answer.userId === currentUserId;
+  const canDelete = answer.userEmail === currentUserEmail;
+  const isLiked = answer.userVote === "like";
+  const isDisliked = answer.userVote === "dislike";
 
   return (
     <div className={styles.answer}>
@@ -140,30 +63,25 @@ const AnswerCard = ({ answer, onHelpfulClick, onDelete, currentUserId }) => {
           alt="avatar"
         />
         <div className={styles.userInfo}>
-          <strong>{answer.user}</strong>
-          {answer.isVerified && (
-            <span className={styles.verified}>✔ Verified</span>
-          )}
-          {answer.role === "admin" && (
-            <span className={styles.adminBadge}>Support</span>
-          )}
+          <strong>{answer.userName}</strong>
+          <span className={styles.verified}>✔ Verified</span>
         </div>
       </div>
-      <div className={styles.aText}>{answer.text}</div>
+      <div className={styles.aText}>{answer.answer}</div>
       <div className={styles.actions}>
         <button
-          onClick={handleHelpfulClick}
+          onClick={() => handleVote("like")}
           className={`${styles.actionButton}`}
         >
-          <span><BiSolidLike className={`${isHelpful ? styles.active : ""}`} /></span> {helpfulCount}
+          <BiSolidLike className={`${isLiked ? styles.active : ""}`} />{" "}
+          {answer.likeCount}
         </button>
         <button
-          onClick={handleDislikeClick}
+          onClick={() => handleVote("dislike")}
           className={`${styles.actionButton}`}
         >
-          <span><BiSolidDislike className={`${
-            isDisliked ? styles.active : ""
-          }`}/></span> {dislikeCount}
+          <BiSolidDislike className={`${isDisliked ? styles.active : ""}`} />{" "}
+          {answer.dislikeCount}
         </button>
         {canDelete && (
           <button
@@ -179,25 +97,13 @@ const AnswerCard = ({ answer, onHelpfulClick, onDelete, currentUserId }) => {
   );
 };
 
-const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserId }) => {
-  const [isHelpful, setIsHelpful] = useState(false);
-  const [helpfulCount, setHelpfulCount] = useState(q.helpful);
+const QuestionCard = ({ q, onVote, onReplySubmit, onDelete, currentUserEmail }) => {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const handleHelpfulClick = () => {
-    if (!isHelpful) {
-      const newCount = helpfulCount + 1;
-      setHelpfulCount(newCount);
-      setIsHelpful(true);
-      onHelpfulClick(q.id, newCount);
-    } else {
-      const newCount = helpfulCount - 1;
-      setHelpfulCount(newCount);
-      setIsHelpful(false);
-      onHelpfulClick(q.id, newCount);
-    }
+  const handleVote = (voteType) => {
+    onVote("question", q.id, voteType);
   };
 
   const handleReplySubmit = (e) => {
@@ -214,7 +120,7 @@ const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserI
   };
 
   const confirmDelete = () => {
-    onDelete(q.id);
+    onDelete("question", q.id);
     setShowDeleteConfirm(false);
   };
 
@@ -222,7 +128,9 @@ const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserI
     setShowDeleteConfirm(false);
   };
 
-  const canDelete = q.userId === currentUserId;
+  const canDelete = q.userEmail === currentUserEmail;
+  const isLiked = q.userVote === "like";
+  const isDisliked = q.userVote === "dislike";
 
   return (
     <div className={styles.card}>
@@ -237,15 +145,13 @@ const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserI
         <div className={styles.qUser}>
           <img src={userAvatar} alt="user" />
           <div className={styles.userInfo}>
-            <strong>{q.user}</strong>
-            {q.isVerified && (
-              <span className={styles.verified}>✔ Verified</span>
-            )}
+            <strong>{q.userName}</strong>
+            <span className={styles.verified}>✔ Verified</span>
           </div>
         </div>
         <div className={styles.headerRight}>
           <span className={styles.date}>
-            {new Date(q.date).toLocaleDateString()}
+            {new Date(q.createdAt).toLocaleDateString()}
           </span>
           {canDelete && (
             <button
@@ -266,9 +172,9 @@ const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserI
             <AnswerCard
               key={ans.id}
               answer={ans}
-              onHelpfulClick={onHelpfulClick}
-              onDelete={(answerId) => onDelete(q.id, answerId)}
-              currentUserId={currentUserId}
+              onVote={onVote}
+              onDelete={onDelete}
+              currentUserEmail={currentUserEmail}
             />
           ))
         ) : (
@@ -280,10 +186,18 @@ const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserI
 
       <div className={styles.footer}>
         <button
-          onClick={handleHelpfulClick}
+          onClick={() => handleVote("like")}
           className={`${styles.actionButton}`}
         >
-          <span><BiSolidLike className={`${isHelpful ? styles.active : ""}`} /></span> {helpfulCount}
+          <BiSolidLike className={`${isLiked ? styles.active : ""}`} />{" "}
+          {q.likeCount}
+        </button>
+        <button
+          onClick={() => handleVote("dislike")}
+          className={`${styles.actionButton}`}
+        >
+          <BiSolidDislike className={`${isDisliked ? styles.active : ""}`} />{" "}
+          {q.dislikeCount}
         </button>
         <button
           className={styles.actionButton}
@@ -319,106 +233,201 @@ const QuestionCard = ({ q, onHelpfulClick, onReplySubmit, onDelete, currentUserI
   );
 };
 
-const QASection = () => {
+const QASection = ({ productId }) => {
   const [questions, setQuestions] = useState([]);
+  const [filteredQuestions, setFilteredQuestions] = useState([]); // New state for filtered questions
   const [newQuestion, setNewQuestion] = useState("");
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("recent");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [currentUserId] = useState("user1");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchQuestions().then((data) => {
-      setQuestions(data);
-      setLoading(false);
-    });
-  }, []);
+    fetchCurrentUser();
+    fetchQuestions();
+  }, [productId, sortBy]);
 
-  const handleAddQuestion = () => {
-    if (!newQuestion.trim()) return;
-    const question = {
-      id: Date.now(),
-      userId: currentUserId,
-      user: "You",
-      isVerified: true,
-      date: new Date().toISOString(),
-      question: newQuestion.trim(),
-      helpful: 0,
-      answers: [],
-    };
-    setQuestions([question, ...questions]);
-    setNewQuestion("");
-  };
+  useEffect(() => {
+    // Apply local filtering based on activeFilter
+    if (activeFilter === "all") {
+      setFilteredQuestions(questions);
+    } else if (activeFilter === "answered") {
+      setFilteredQuestions(questions.filter((q) => q.answers.length > 0));
+    } else if (activeFilter === "unanswered") {
+      setFilteredQuestions(questions.filter((q) => q.answers.length === 0));
+    }
+  }, [questions, activeFilter]);
 
-  const handleHelpfulClick = (id, newCount) => {
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q) => {
-        if (q.id === id) return { ...q, helpful: newCount };
-        const updatedAnswers = q.answers.map((a) =>
-          a.id === id ? { ...a, helpful: newCount } : a
-        );
-        return { ...q, answers: updatedAnswers };
-      })
-    );
-  };
-
-  const handleReplySubmit = (questionId, replyText) => {
-    const newAnswer = {
-      id: Date.now(),
-      userId: currentUserId,
-      user: "You",
-      isVerified: true,
-      role: "user",
-      text: replyText,
-      helpful: 0,
-    };
-
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q) =>
-        q.id === questionId ? { ...q, answers: [...q.answers, newAnswer] } : q
-      )
-    );
-  };
-
-  const handleDelete = (questionId, answerId = null) => {
-    if (answerId) {
-      // Delete an answer
-      setQuestions(prevQuestions =>
-        prevQuestions.map(q => ({
-          ...q,
-          answers: q.answers.filter(a => a.id !== answerId)
-        }))
-      );
-    } else {
-      // Delete a question
-      setQuestions(prevQuestions =>
-        prevQuestions.filter(q => q.id !== questionId)
-      );
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/user-details", {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUser({ email: data.email, name: data.name });
+      } else {
+        console.error("Failed to fetch user details:", response.status);
+        setCurrentUser(null);
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      setCurrentUser(null);
     }
   };
 
-  const sortedQuestions = [...questions].sort((a, b) => {
-    return sortBy === "recent"
-      ? new Date(b.date) - new Date(a.date)
-      : b.helpful - a.helpful;
-  });
+  const fetchQuestions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      console.log(
+        `Fetching questions with productId: ${productId}, sort: ${sortBy}, filter: all`
+      );
+      const response = await fetch(
+        `http://localhost:8080/api/products/${productId}/questions?sort=${sortBy}&filter=all`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Questions fetched:", data);
+        setQuestions(data || []);
+      } else {
+        console.error("Failed to fetch questions:", response.status, response.statusText);
+        setError("Failed to load questions. Please try again.");
+        setQuestions([]);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      setError("An error occurred while loading questions.");
+      setQuestions([]);
+    }
+    setLoading(false);
+  };
 
-  const filteredQuestions = sortedQuestions.filter((q) => {
-    if (activeFilter === "answered") return q.answers.length > 0;
-    if (activeFilter === "unanswered") return q.answers.length === 0;
-    return true;
-  });
+  const handleAddQuestion = async () => {
+    if (!newQuestion.trim() || !currentUser) return;
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/products/${productId}/questions`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: newQuestion }),
+        }
+      );
+      if (response.ok) {
+        setNewQuestion("");
+        fetchQuestions();
+      } else {
+        console.error("Failed to add question:", response.status);
+        setError("Failed to add question. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding question:", error);
+      setError("An error occurred while adding the question.");
+    }
+  };
+
+  const handleReplySubmit = async (questionId, replyText) => {
+    if (!currentUser) return;
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/products/${productId}/questions/${questionId}/answers`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answer: replyText }),
+        }
+      );
+      if (response.ok) {
+        fetchQuestions();
+      } else {
+        console.error("Failed to add answer:", response.status);
+        setError("Failed to add answer. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding answer:", error);
+      setError("An error occurred while adding the answer.");
+    }
+  };
+
+  const handleDelete = async (entityType, id) => {
+    if (!currentUser) return;
+    try {
+      const url =
+        entityType === "question"
+          ? `http://localhost:8080/api/products/${productId}/questions/${id}`
+          : `http://localhost:8080/api/products/${productId}/answers/${id}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (response.ok) {
+        fetchQuestions();
+      } else {
+        console.error(`Failed to delete ${entityType}:`, response.status);
+        setError(`Failed to delete ${entityType}. Please try again.`);
+      }
+    } catch (error) {
+      console.error("Error deleting:", error);
+      setError(`An error occurred while deleting the ${entityType}.`);
+    }
+  };
+
+  const handleVote = async (entityType, entityId, voteType) => {
+    if (!currentUser) return;
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/products/${productId}/vote`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ entityType, entityId, voteType }),
+        }
+      );
+      if (response.ok) {
+        fetchQuestions();
+      } else {
+        console.error("Failed to vote:", response.status);
+        setError("Failed to record vote. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error voting:", error);
+      setError("An error occurred while voting.");
+    }
+  };
+
+  const totalQuestions = filteredQuestions.length;
+  const totalAnswers = filteredQuestions.reduce((acc, q) => acc + q.answers.length, 0);
 
   return (
     <div className={styles.qaSection}>
       <div className={styles.header}>
         <div className={styles.stats}>
-          <span>{questions.length} questions</span>
-          <span>
-            {questions.reduce((acc, q) => acc + q.answers.length, 0)} answers
-          </span>
+          <span>{totalQuestions} questions</span>
+          <span>{totalAnswers} answers</span>
         </div>
       </div>
+
+      {error && (
+        <div className={styles.errorMessage}>
+          {error}
+          <button
+            onClick={fetchQuestions}
+            className={styles.retryButton}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       <div className={styles.askContainer}>
         <input
@@ -427,10 +436,11 @@ const QASection = () => {
           value={newQuestion}
           onChange={(e) => setNewQuestion(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleAddQuestion()}
+          disabled={!currentUser}
         />
         <button
           onClick={handleAddQuestion}
-          disabled={!newQuestion.trim()}
+          disabled={!newQuestion.trim() || !currentUser}
           className={styles.askButton}
         >
           Ask Question
@@ -440,25 +450,19 @@ const QASection = () => {
       <div className={styles.controls}>
         <div className={styles.filters}>
           <button
-            className={`${styles.filterButton} ${
-              activeFilter === "all" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${activeFilter === "all" ? styles.active : ""}`}
             onClick={() => setActiveFilter("all")}
           >
             All Questions
           </button>
           <button
-            className={`${styles.filterButton} ${
-              activeFilter === "answered" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${activeFilter === "answered" ? styles.active : ""}`}
             onClick={() => setActiveFilter("answered")}
           >
             Answered
           </button>
           <button
-            className={`${styles.filterButton} ${
-              activeFilter === "unanswered" ? styles.active : ""
-            }`}
+            className={`${styles.filterButton} ${activeFilter === "unanswered" ? styles.active : ""}`}
             onClick={() => setActiveFilter("unanswered")}
           >
             Unanswered
@@ -490,10 +494,10 @@ const QASection = () => {
                 <QuestionCard
                   key={q.id}
                   q={q}
-                  onHelpfulClick={handleHelpfulClick}
+                  onVote={handleVote}
                   onReplySubmit={handleReplySubmit}
                   onDelete={handleDelete}
-                  currentUserId={currentUserId}
+                  currentUserEmail={currentUser ? currentUser.email : null}
                 />
               ))
             ) : (

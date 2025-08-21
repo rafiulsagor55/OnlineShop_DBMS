@@ -5,10 +5,10 @@ import styles from "./MainContent.module.css";
 const RelatedProductPage = () => {
   const RelatedProducts = [
   // T-Shirts
-  { id: "1", name: "Star Trek", rating: 4.5, type: "T-Shirt", color: "Black", size: "M", brand: "Aarong", price: 700, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "2", name: "Graphic Print Tee", rating: 4.2, type: "T-Shirt", color: "White", size: "L", brand: "Texmart", price: 650, discount: 5, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "3", name: "Vintage Logo", rating: 3.9, type: "T-Shirt", color: "Gray", size: "XL", brand: "Easy", price: 800, discount: 15, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "4", name: "Pocket Basic", rating: 4.0, type: "T-Shirt", color: "Navy", size: "S", brand: "Boss", price: 900, discount: 0, material: "Cotton", availability: "In Stock", category: "Summer" },
+  { id: "PROD-0002", name: "Star Trek", rating: 4.5, type: "T-Shirt", color: "Black", size: "M", brand: "Aarong", price: 700, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
+  { id: "PROD-0001", name: "Graphic Print Tee", rating: 4.2, type: "T-Shirt", color: "White", size: "L", brand: "Texmart", price: 650, discount: 5, material: "Cotton", availability: "In Stock", category: "Summer" },
+  { id: "PROD-0002", name: "Vintage Logo", rating: 3.9, type: "T-Shirt", color: "Gray", size: "XL", brand: "Easy", price: 800, discount: 15, material: "Cotton", availability: "In Stock", category: "Summer" },
+  { id: "PROD-0002", name: "Pocket Basic", rating: 4.0, type: "T-Shirt", color: "Navy", size: "S", brand: "Boss", price: 900, discount: 0, material: "Cotton", availability: "In Stock", category: "Summer" },
 
   // Shirts
   { id: "5", name: "Snow Eagle", rating: 4.7, type: "Shirt", color: "White", size: "L", brand: "Yellow", price: 1200, discount: 12, material: "Linen", availability: "In Stock", category: "Formal" },

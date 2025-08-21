@@ -1,18 +1,20 @@
 .topbar {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 20px;
   width: 100vw;
-  /* height: 60px; */
   padding: 8px 15px;
+  padding-bottom: 2px;
   background: #222;
   flex-wrap: wrap;
   box-sizing: border-box;
   position: fixed;
   top: 0;
   left: 0;
+  min-height: 56px;
   z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .topbarLeft {
@@ -21,18 +23,59 @@
   gap: 10px;
 }
 
+/* Improved Toggle Button Styles */
 .menuToggle {
-  font-size: 22px;
   background: none;
   border: none;
-  color: white;
+  padding: 8px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.menuToggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger {
+  width: 24px;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.hamburgerLine {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: white;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+/* Animated X when sidebar is open */
+.menuToggle.active .hamburgerLine:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menuToggle.active .hamburgerLine:nth-child(2) {
+  opacity: 0;
+}
+
+.menuToggle.active .hamburgerLine:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
 }
 
 .topbarLeft h2 {
   color: #0fbb2b;
   font-size: 24px;
   margin: 0;
+  font-weight: 600;
 }
 
 .searchBar {
@@ -41,7 +84,6 @@
   justify-self: center;
   width: 80%;
   max-width: 600px;
-  gap: 0px;
 }
 
 .searchBar input {
@@ -49,13 +91,16 @@
   padding: 8px;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   border: none;
+  font-size: 16px;
+  transition: border 0.2s ease;
 }
 
-.searchBar input:focus{
+.searchBar input:focus {
   border: 2px solid #0fbb2b;
+  outline: none;
 }
 
 .searchButton {
@@ -66,40 +111,102 @@
   border-bottom-right-radius: 4px;
   color: white;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.searchButton:hover {
+  background: #0d9c24;
 }
 
 .topbarButtons {
   display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.topbarButtons button {
-  margin-left: 10px;
+.cartButton {
   padding: 4px 6px;
-  background: inherit;
+  padding-bottom: 0px;
+  background: transparent;
   border: none;
   border-radius: 4px;
   color: white;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cartButton:hover,
+.cartButton.active {
+  background: #474847;
+  color: white;
+  transform: scale(1.1);
+}
+
+.orderButton {
+  padding: 0px 6px;
+  padding-bottom: 5px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orderButton:hover,
+.orderButton.active {
+  background: #474847;
+  color: white;
+  transform: scale(1.1);
+}
+
+.cartContainer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 3px;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 10px;
+  text-align: center;
+}
+
+.authButtons {
+  display: flex;
   gap: 10px;
 }
 
-.authButton{
-  /* margin-left: 10px; */
-  margin-right: 20px;
-  padding: 4px 6px;
+.authButton {
+  padding: 4px 12px;
   background: #0fbb2b;
   border: none;
   border-radius: 4px;
   color: white;
   cursor: pointer;
-  gap: 10px;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-button:hover {
-  transform: scale(1.1);
+.authButton:hover,
+.authButton.active {
+  background: #0d9c24;
+  transform: scale(1.05);
 }
 
-.profilePic{
+.cartIcon {
+  font-size: 35px;
+}
+
+.profilePic {
   margin-right: 20px;
 }
 
@@ -107,16 +214,125 @@ button:hover {
   height: 45px;
   border-radius: 50%;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
+
 .profilePic img:hover {
   transform: scale(1.1);
 }
 
-.menuToggle button:hover {
-  transform: scale(2);
-}
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .topbar {
+    grid-template-columns: auto 1fr auto;
+    gap: 6px;
+    padding: 4px 8px;
+    padding-bottom: 1px;
+    height: 50px;
+    align-items: center;
+  }
 
+  .topbarLeft {
+    gap: 4px;
+  }
 
-.cartIcon {
-  font-size: 35px;
+  .menuToggle {
+    padding: 6px;
+  }
+  
+  .hamburger {
+    width: 20px;
+    height: 16px;
+  }
+  
+  .menuToggle.active .hamburgerLine:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  
+  .menuToggle.active .hamburgerLine:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .topbarLeft h2 {
+    display: none;
+  }
+
+  .searchBar {
+    width: 80%;
+    max-width: none;
+    height: 30px;
+  }
+
+  .searchBar input {
+    padding: 3px;
+    font-size: 12px;
+    height: 100%;
+  }
+
+  .searchBar input:focus {
+    border: 1px solid #0fbb2b;
+  }
+
+  .searchButton {
+    padding: 3px 6px;
+    height: 100%;
+  }
+
+  .searchButton svg {
+    font-size: 12px;
+  }
+
+  .topbarButtons {
+    gap: 0px;
+  }
+
+  .cartButton {
+    padding-bottom: 0px;
+    padding-top: 8px;
+  }
+
+  .cartButton:hover,
+  .cartButton.active {
+    background: #474847;
+    transform: scale(1.05);
+  }
+
+  .orderButton {
+    padding: 0px 6px;
+    padding-bottom: 4px;
+  }
+
+  .orderButton:hover,
+  .orderButton.active {
+    background: #474847;
+    transform: scale(1.05);
+  }
+
+  .cartIcon {
+    font-size: 25px;
+  }
+
+  .cartBadge {
+    top: -4px;
+    right: -4px;
+    padding: 1px 4px;
+    font-size: 8px;
+    min-width: 8px;
+  }
+
+  .authButtons {
+    gap: 4px;
+  }
+
+  .authButton {
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+  }
+
+  .authButton:hover,
+  .authButton.active {
+    background: #0d9c24;
+    transform: scale(1.05);
+  }
 }

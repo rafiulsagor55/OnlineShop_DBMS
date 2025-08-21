@@ -1,15 +1,14 @@
-/* QASection.module.css */
 .qaSection {
   background: #ffffff;
   border-radius: 16px;
   padding: 2.5rem;
-  width: 100%;
+  max-width: 100%;
   margin: 2rem auto;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #111827;
 }
-/* Add if not present */
+
 .qaList {
   padding-bottom: 20px;
 }
@@ -240,9 +239,10 @@
   background-color: #f9fafb;
   border: 1px solid #e5e7eb;
 }
-.answerSection{
-    max-height: 400px;
-    overflow-y: auto;
+
+.answerSection {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .aMeta {
@@ -283,17 +283,15 @@
   color: #4b5563;
   cursor: pointer;
   font-weight: 500;
-  font-size:20px;
+  font-size: 20px;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  /* transition: all 0.2s; */
 }
 
 .actionButton:hover {
   background: #b0b1b5;
   color: inherit;
   transform: scale(1);
-
 }
 
 .active {
@@ -382,17 +380,12 @@
   background: #e5e7eb;
 }
 
-/* Add these styles to your QASection.module.css */
 .headerRight {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-
-/* Add these styles to your QASection.module.css */
-
-/* Confirmation Dialog Styles */
 .confirmationDialogOverlay {
   position: fixed;
   top: 0;
@@ -443,13 +436,6 @@
   background-color: #dc2626;
 }
 
-/* Existing delete button styles */
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .deleteButton {
   color: #ef4444;
   padding: 0.25rem;
@@ -461,4 +447,227 @@
   color: #dc2626;
   background: inherit;
   transform: scale(1.5);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .qaSection {
+    padding: 1.5rem;
+    margin: 1rem auto;
+    border-radius: 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .stats {
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .askContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .askContainer input {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+
+  .askButton {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .filters {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .filterButton {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .sortRow {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .sortSelect {
+    /* width: 100%; */
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .qHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .qUser {
+    gap: 0.5rem;
+  }
+
+  .qUser img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .qText {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .answer {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .aMeta img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .aText {
+    font-size: 0.9rem;
+  }
+
+  .actions,
+  .footer {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .actionButton {
+    padding: 0.5rem;
+    font-size: 18px;
+  }
+
+  .replyForm textarea {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    min-height: 80px;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .submitButton,
+  .cancelButton {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .confirmationDialog {
+    padding: 1.5rem;
+    width: 95%;
+    max-width: 320px;
+  }
+
+  .confirmationDialog p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .dialogButtons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .confirmButton,
+  .cancelButton {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .deleteButton {
+    font-size: 1rem;
+  }
+
+  .answerSection {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .qaSection {
+    padding: 1rem;
+    margin: 0.5rem auto;
+  }
+
+  .stats {
+    font-size: 0.85rem;
+  }
+
+  .filterButton {
+    font-size: 0.85rem;
+    padding: 0.4rem;
+  }
+
+  .sortSelect {
+    font-size: 0.85rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .qUser img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .qText {
+    font-size: 0.95rem;
+  }
+
+  .answer {
+    padding: 0.5rem;
+  }
+
+  .aMeta img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .aText {
+    font-size: 0.85rem;
+  }
+
+  .actionButton {
+    font-size: 16px;
+  }
+
+  .replyForm textarea {
+    font-size: 0.85rem;
+    min-height: 70px;
+  }
 }

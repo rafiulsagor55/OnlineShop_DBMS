@@ -14,9 +14,11 @@ import {
 import { MdDelete } from "react-icons/md";
 import Modal from "./Modal";
 import Notification from "./Notification";
+import { useParams } from "react-router-dom";
 
 
 const predefinedOptions = {
+  gender: ["Male", "Female", "Kids", "Unisex", "Others"],
   category: ["Casual", "Formal", "Party", "Traditional", "Others"],
   type: ["Shirt", "T-Shirt", "Jeans", "Panjabi", "Others"],
   brand: ["Aarong", "Cats Eye", "Yellow", "Dorjibari", "Others"],
@@ -60,6 +62,7 @@ const standardSizes = [
 ];
 
 const EditProductPage = () => {
+  const param = useParams();
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -73,10 +76,12 @@ const EditProductPage = () => {
     discount: "",
     rating: "",
     sizes: [],
+    sizeDetails: "",
     colors: {},
     deliveryInfo: "",
     returnPolicy: "",
     trustInfo: "",
+    gender:"",
   });
 
   const [showCustomInput, setShowCustomInput] = useState({
@@ -109,15 +114,15 @@ const EditProductPage = () => {
   };
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      const id = "PROD-0002";
-      console.log("fetchProductData is called!");
+    const fetchProductData = async () => {      
+      const id = param.id;
+      console.log("fetchProductData is called!"+ id);
       if (!id) return;
 
       const response = await fetch(`http://localhost:8080/api/products/${id}`);
       if (response.ok) {
         const data = await response.json();
-        setFormData(data); // Set product data
+        setFormData(data); 
       }
     };
     fetchProductData();
@@ -344,19 +349,16 @@ const EditProductPage = () => {
 
   const SaveEditedProduct = async (e) => {
     e.preventDefault();
-
-    // You can add any client-side validation here if needed
-
     try {
-      // Send POST request to backend using fetch
       const response = await fetch(
         "http://localhost:8080/api/products/save-edited-product",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json", // Sending JSON data
+            "Content-Type": "application/json", 
           },
-          body: JSON.stringify(formData), // Convert formData object to JSON string
+          body: JSON.stringify(formData), 
+          credentials: "include", // Include credentials for session management
         }
       );
 
@@ -517,11 +519,11 @@ const EditProductPage = () => {
               <div className={styles.section}>
                 <h3 className={styles.sectionTitle}>Classification</h3>
                 <div className={styles.grid2}>
-                  {["category", "type", "brand", "material"].map((field) => (
+                  {["gender","category", "type", "brand", "material"].map((field) => (
                     <div className={styles.row} key={field}>
                       <label>
                         {field[0].toUpperCase() + field.slice(1)}
-                        {["type", "brand"].includes(field) && (
+                        {["gender","type", "brand"].includes(field) && (
                           <span className={styles.required}>*</span>
                         )}
                       </label>
@@ -653,6 +655,16 @@ const EditProductPage = () => {
                       </div>
                     </div>
                   )}
+                </div>
+                <div className={styles.row}>
+                  <label>Size Details</label>
+                  <textarea
+                    name="sizeDetails"
+                    value={formData.sizeDetails}
+                    onChange={handleChange}
+                    placeholder="e.g. Size chart or specific measurements"
+                    rows="4"
+                  />
                 </div>
               </div>
 
@@ -902,6 +914,9 @@ const EditProductPage = () => {
               <div className={styles.overviewSection}>
                 <h4>Classification</h4>
                 <div className={styles.overviewRow}>
+                  <strong>Gender:</strong> {formData.gender}
+                </div>
+                <div className={styles.overviewRow}>
                   <strong>Category:</strong> {formData.category}
                 </div>
                 <div className={styles.overviewRow}>
@@ -932,6 +947,9 @@ const EditProductPage = () => {
                     </div>
                   </div>
                 )}
+                <div className={styles.overviewRow}>
+                  <strong>Size Details:</strong> {formData.sizeDetails || "Not specified"}
+                </div>
                 <div className={styles.overviewRow}>
                   <strong>Rating:</strong>{" "}
                   {formData.rating ? `${formData.rating}★` : "Not rated"}

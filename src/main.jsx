@@ -36,6 +36,14 @@ import UserDetails from "./component/Auth/UserDetails.jsx";
 import SetPassword from "./component/Auth/SetPassword.jsx";
 import ResetPassword from "./component/Auth/ResetPassword.jsx";
 import ResetPasswordSendCode from "./component/Auth/ResetPasswordSendCode";
+import ChatApp from "./component/ChatApp.jsx";
+import Layout from "./component/design/Layout.jsx";
+import AdminTypeBasedItem from "./component/design/AdminTypeBasedItem.jsx";
+import AdminProductPage from "./component/design/AdminProductPage.jsx";
+import AdminTypeBasedItemWomen from "./component/design/AdminTypeBasedItemWomen.jsx";
+import AdminTypeBasedItemKids from "./component/design/AdminTypeBasedItemKids.jsx";
+import AdminTypeBasedItemUnisex from "./component/design/AdminTypeBasedItemUnisex.jsx";
+import TypeBasedItemUnisex from "./component/design/TypeBasedItemUnisex.jsx";
 
 const router = createBrowserRouter([
   {
@@ -49,14 +57,42 @@ const router = createBrowserRouter([
       {
         path: "Mens-Wear",
         element: <TypeBasedItem />,
+        children: [
+          {
+            path: ":id",
+            element: <ProductPage />,
+          },
+        ],
       },
       {
         path: "Womens-Wear",
         element: <TypeBasedItemWomen />,
+        children: [
+          {
+            path: ":id",
+            element: <ProductPage />,
+          },
+        ],
       },
       {
         path: "Kids-Wear",
         element: <TypeBasedItemKids />,
+        children: [
+          {
+            path: ":id",
+            element: <ProductPage />,
+          },
+        ],
+      },
+      {
+        path: "Unisex-Wear",
+        element: <TypeBasedItemUnisex />,
+        children: [
+          {
+            path: ":id",
+            element: <ProductPage />,
+          },
+        ],
       },
       {
         path: "product/:id",
@@ -114,7 +150,103 @@ const router = createBrowserRouter([
   },
   {
     path: "/order-page-admin",
-    element: <AdminOrdersPage/>,
+    element: <AdminOrdersPage />,
+  },
+  {
+    path: "/chatbox",
+    element: <ChatApp />,
+  },
+  {
+    path: "/filter-option",
+    element: <AdminFilterInput />,
+  },
+  {
+    path: "/admin",
+    element: <Layout />,
+    children: [
+      {
+        path: "mens-wear",
+        element: <AdminTypeBasedItem />,
+        children: [
+          {
+            path: ":id",
+            element: <AdminProductPage />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditProductPage />,
+          },
+        ],
+      },
+      {
+        path: "womens-wear",
+        element: <AdminTypeBasedItemWomen />,
+        children: [
+          {
+            path: ":id",
+            element: <AdminProductPage />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditProductPage />,
+          },
+        ],
+      },
+      {
+        path: "kids-wear",
+        element: <AdminTypeBasedItemKids />,
+        children: [
+          {
+            path: ":id",
+            element: <AdminProductPage />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditProductPage />,
+          },
+        ],
+      },
+      {
+        path: "unisex",
+        element: <AdminTypeBasedItemUnisex />,
+        children: [
+          {
+            path: ":id",
+            element: <AdminProductPage />,
+          },
+          {
+            path: "edit/:id",
+            element: <EditProductPage />,
+          },
+        ],
+      },
+
+      {
+        path: "filter-mens-wear",
+        element: <AdminFilterInput />,
+      },
+      {
+        path: "filter-womens-wear",
+        element: <AdminFilterInput />,
+      },
+      {
+        path: "filter-kids-wear",
+        element: <AdminFilterInput />,
+      },
+      {
+        path: "filter-unisex-wear",
+        element: <AdminFilterInput />,
+      },
+      
+      {
+        path: "orders",
+        element: <AdminOrdersPage />,
+      },
+      {
+        path: "add-product",
+        element: <ProductInputPage/>,
+      },
+    ],
   },
 ]);
 

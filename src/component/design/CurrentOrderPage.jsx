@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   AiOutlineClockCircle,
   AiOutlineCheckCircle,
   AiOutlineShopping,
   AiOutlineCloseCircle,
 } from "react-icons/ai";
+import { jsPDF } from "jspdf";
 import {
   BsTruck,
   BsBoxSeam,
@@ -16,6 +17,7 @@ import {
 import { RiNotificationBadgeLine } from "react-icons/ri";
 import { MdOutlineLocalShipping, MdOutlinePayment } from "react-icons/md";
 import { FiPrinter, FiMail } from "react-icons/fi";
+import * as htmlToImage from "html-to-image";
 import styles from "./CurrentOrderPage.module.css";
 import Notification from "./Notification";
 
@@ -58,7 +60,7 @@ const CurrentOrderPage = () => {
         console.log(data);
         // Ensure items is always an array
         data.forEach((order) => {
-          order.items = order.items || []; // If order.items is undefined, set it to an empty array
+          order.items = order.items || [];
         });
         setOrders(data);
         setLoading(false);
@@ -83,8 +85,159 @@ const CurrentOrderPage = () => {
     });
   };
 
+  const contentRef = useRef();
+  const exportPDF = () => {
+    if (!selectedOrder) {
+      showNotif("No order selected.", "error");
+      return;
+    }
+
+    try {
+      const doc = new jsPDF({
+        unit: "pt",
+        format: "a4",
+        orientation: "portrait",
+      });
+
+      // Set fonts and colors for professional look
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(24);
+      doc.setTextColor(40, 40, 40);
+      doc.text("Order Details", 40, 60);
+
+      // Invoice details header
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Order ID: ${selectedOrder.id}`, 40, 80);
+      doc.text(`Date: ${formatDateTime(new Date(selectedOrder.date))}`, 40, 95);
+
+      // Company info (assuming a placeholder company)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+      doc.text("Online Shop", 400, 40);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("Company Address", 400, 55);
+      doc.text("City, State, ZIP", 400, 70);
+      doc.text("Phone: +123-456-7890", 400, 85);
+      doc.text("Email: info@company.com", 400, 100);
+
+      // Bill To section
+      doc.setDrawColor(200, 200, 200);
+      doc.line(40, 120, 555, 120); // Horizontal line
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 40);
+      doc.text("Bill To:", 40, 140);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Name: ${selectedOrder.customer}`, 40, 155);
+      doc.text(`Email: ${selectedOrder.email}`, 40, 170);
+      doc.text(`Phone: ${selectedOrder.contact}`, 40, 185);
+      if (selectedOrder.deliveryMethod === "home") {
+        doc.text(`Address: ${selectedOrder.address}`, 40, 200);
+      } else {
+        doc.text(`Pickup Location: ${selectedOrder.pickupLocation}`, 40, 200);
+      }
+
+      // Order Information
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Order Information:", 300, 140);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Delivery Method: ${selectedOrder.deliveryMethod === "home" ? "Home Delivery" : "Store Pickup"}`, 300, 155);
+      doc.text(`Payment Method: ${selectedOrder.paymentMethod === "COD" ? "Cash on Delivery" : "bKash"}`, 300, 170);
+      doc.text(`Payment Status: ${selectedOrder.payment === "paid" ? "Paid" : "Pending"}`, 300, 185);
+      doc.text(`Status: ${selectedOrder.status ? (selectedOrder.status === "ready" ? "Ready for Pickup" : selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)) : "N/A"}`, 300, 200);
+
+      // Draw another line
+      doc.line(40, 220, 555, 220);
+
+      // Items Table
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Order Items:", 40, 240);
+
+      // Table headers
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setDrawColor(150, 150, 150);
+      doc.setFillColor(240, 240, 240);
+      doc.rect(40, 250, 515, 15, "F"); // Header background
+      doc.text("Product", 45, 260);
+      doc.text("Color", 200, 260);
+      doc.text("Size", 280, 260);
+      doc.text("Price (BDT)", 350, 260);
+      doc.text("Qty", 420, 260);
+      doc.text("Total (BDT)", 480, 260);
+
+      // Table rows
+      doc.setFont("helvetica", "normal");
+      let yPos = 265;
+      selectedOrder.items.forEach((item, index) => {
+        const rowColor = index % 2 === 0 ? 255 : 245;
+        doc.setFillColor(rowColor, rowColor, rowColor);
+        doc.rect(40, yPos, 515, 15, "F");
+        doc.text(item.name || "N/A", 45, yPos + 10);
+        doc.text(item.color || "N/A", 200, yPos + 10);
+        doc.text(item.size || "N/A", 280, yPos + 10);
+        doc.text(item.price ? `${item.price}` : "N/A", 350, yPos + 10);
+        doc.text(`${item.quantity || 0}`, 420, yPos + 10);
+        doc.text(`${item.price * item.quantity || 0}`, 480, yPos + 10);
+        yPos += 15;
+      });
+
+      // Draw table borders
+      doc.setDrawColor(200, 200, 200);
+      doc.rect(40, 250, 515, yPos - 250); // Outer border
+      // Vertical lines
+      doc.line(195, 250, 195, yPos);
+      doc.line(275, 250, 275, yPos);
+      doc.line(345, 250, 345, yPos);
+      doc.line(415, 250, 415, yPos);
+      doc.line(475, 250, 475, yPos);
+
+      // Order Summary
+      yPos += 20;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Order Summary:", 40, yPos);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      yPos += 15;
+      doc.text("Subtotal:", 400, yPos);
+      doc.text(`${selectedOrder.total} BDT`, 480, yPos);
+      yPos += 15;
+      doc.text("Delivery Charge:", 400, yPos);
+      doc.text(`${selectedOrder.deliveryMethod === "home" ? 50 : 0} BDT`, 480, yPos);
+      yPos += 15;
+      doc.setFont("helvetica", "bold");
+      doc.text("Total:", 400, yPos);
+      doc.text(`${selectedOrder.total + (selectedOrder.deliveryMethod === "home" ? 50 : 0)} BDT`, 480, yPos);
+
+      // Footer
+      doc.setDrawColor(200, 200, 200);
+      doc.line(40, 760, 555, 760);
+      doc.setFontSize(9);
+      doc.setTextColor(100, 100, 100);
+      doc.text("Thank you for your business!", 40, 780);
+      doc.text("If you have any questions, contact us at onlineshop@company.com", 40, 795);
+
+      // Page number
+      doc.text(`Page 1 of 1`, 555 / 2, 810, { align: "center" });
+
+      doc.save(`invoice_${selectedOrder.id}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      showNotif("Failed to generate PDF. Please try again.", "error");
+    }
+  };
+
   const handlePrintInvoice = () => {
-    window.print();
+    exportPDF();
   };
 
   const handleEmailCustomer = () => {
@@ -209,7 +362,7 @@ const CurrentOrderPage = () => {
           onClose={() => setShowNotification(false)}
         />
       )}
-      <div className={styles.orderDetailModal}>
+      <div ref={contentRef} className={styles.orderDetailModal}>
         <div className={styles.modalHeader}>
           <h2>Order ID: {selectedOrder.id}</h2>
           <div className={styles.modalActions}>
@@ -543,6 +696,8 @@ const CurrentOrderPage = () => {
                     <thead>
                       <tr>
                         <th>Product</th>
+                        <th>Color</th>
+                        <th>Size</th>
                         <th>Price</th>
                         <th>Qty</th>
                         <th>Total</th>
@@ -552,6 +707,8 @@ const CurrentOrderPage = () => {
                       {selectedOrder.items.map((item) => (
                         <tr key={item.item_id}>
                           <td>{item.name || 'N/A'}</td>
+                          <td>{item.color || 'N/A'}</td>
+                          <td>{item.size || 'N/A'}</td>
                           <td>{item.price ? `৳${item.price}` : 'N/A'}</td>
                           <td>{item.quantity || 0}</td>
                           <td>{item.price * item.quantity || 0}</td>

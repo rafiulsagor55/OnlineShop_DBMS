@@ -1,17 +1,17 @@
-import React, { useMemo, useState, useEffect,useContext } from "react";
+import React, { useMemo, useState, useEffect, useContext } from "react";
 import styles from "./TypeBasedItem.module.css";
-import { Link } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom"; // Add useLocation
 import { UserContext } from "../UserContext";
 
 const filterOptions = {
   category: [
     "All", "Formal", "Summer", "Winter", 
-    "Sportswear","Party","Others"
+    "Sportswear", "Party", "Others"
   ],
   type: [
     "All", "T-Shirt", "Top", "Jeans", "Pants", "Dress", 
     "Jacket", "Sweater", "Hoodie", "Shorts", 
-    "Saree", "Salwar Kameez", "Lehenga","Traditional", "Others"
+    "Saree", "Salwar Kameez", "Lehenga", "Traditional", "Others"
   ],
   color: [
     "All", "White", "Black", "Gray", "Blue", "Red", "Yellow", "Green",
@@ -23,7 +23,7 @@ const filterOptions = {
   ],
   brand: [
     "All", "Aarong", "Kay Kraft", "Yellow", "Ecstasy", "Le Reve", 
-    "Richman", "Dorjibari", "Texmart","Easy", "Others"
+    "Richman", "Dorjibari", "Texmart", "Easy", "Others"
   ],
   material: [
     "All", "Cotton", "Denim", "Linen", "Silk", "Wool", 
@@ -47,7 +47,7 @@ const sortOptions = [
 ];
 
 const TypeBasedItemWomen = () => {
-  const {searchItem}=useContext(UserContext);
+  const { searchItem } = useContext(UserContext);
   const [filters, setFilters] = useState({
     category: ["All"],
     type: ["All"],
@@ -60,16 +60,54 @@ const TypeBasedItemWomen = () => {
     availability: ["All"],
     discount: ["All"],
   });
-
+  const [dynamicFilterOptions, setDynamicFilterOptions] = useState(filterOptions);
   const [sortBy, setSortBy] = useState("Customer Rating");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation(); // Get current location
 
-  // Fetch data from backend
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const myString = "Female";
+        const response = await fetch(`http://localhost:8080/api/filters/get-filters?gender=${encodeURIComponent(myString)}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error || "Failed to fetch filters");
+        }
+
+        const data = await response.json();
+        setDynamicFilterOptions({
+          category: data.category?.length ? ["All", ...data.category, "Others"] : filterOptions.category,
+          type: data.type?.length ? ["All", ...data.type, "Others"] : filterOptions.type,
+          color: data.color?.length ? ["All", ...data.color, "Others"] : filterOptions.color,
+          size: data.size?.length ? ["All", ...data.size, "Others"] : filterOptions.size,
+          brand: data.brand?.length ? ["All", ...data.brand, "Others"] : filterOptions.brand,
+          material: data.material?.length ? ["All", ...data.material, "Others"] : filterOptions.material,
+          price: data.price?.length ? ["All", ...data.price] : filterOptions.price,
+          rating: data.rating?.length ? ["All", ...data.rating] : filterOptions.rating,
+          availability: data.availability?.length ? ["All", ...data.availability] : filterOptions.availability,
+          discount: data.discount?.length ? ["All", ...data.discount] : filterOptions.discount,
+        });
+      } catch (error) {
+        console.error("Error fetching filters:", error);
+      }
+    };
+
+    fetchFilters();
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/products/get-all-products");
+        const response = await fetch("http://localhost:8080/api/products/get-all-womens-products");
         const data = await response.json();
         setProducts(data);
         setLoading(false);
@@ -83,27 +121,24 @@ const TypeBasedItemWomen = () => {
   }, []);
 
   const getNumericRange = (range) => {
-  if (range.includes("+")) return [parseInt(range), Infinity]; // for cases like "10000+"
-  const parts = range.match(/\d+/g); // Extract numbers from range string (e.g., "500 - 999")
-  return parts ? [parseInt(parts[0]), parseInt(parts[1])] : [0, Infinity]; // Default to [0, Infinity] if no valid range
-};
+    if (range.includes("+")) return [parseInt(range), Infinity];
+    const parts = range.match(/\d+/g);
+    return parts ? [parseInt(parts[0]), parseInt(parts[1])] : [0, Infinity];
+  };
 
-  // Helper functions to filter and sort products
   const filterCards = (cards, filters, searchItem = "") => {
     return cards.filter((card) => {
       if (searchItem) {
-      const searchLower = searchItem.toLowerCase();
-      
-      // Check if searchItem is found in any of the relevant fields (case-insensitive)
-      if (
-        !card.name.toLowerCase().includes(searchLower) &&
-        !card.type.toLowerCase().includes(searchLower) &&
-        !card.brand.toLowerCase().includes(searchLower) &&
-        !card.id.toLowerCase().includes(searchLower)
-      ) {
-        return false;
+        const searchLower = searchItem.toLowerCase();
+        if (
+          !card.name.toLowerCase().includes(searchLower) &&
+          !card.type.toLowerCase().includes(searchLower) &&
+          !card.brand.toLowerCase().includes(searchLower) &&
+          !card.id.toLowerCase().includes(searchLower)
+        ) {
+          return false;
+        }
       }
-    }
       return Object.entries(filters).every(([category, values]) => {
         if (!values || values.includes("All")) return true;
 
@@ -133,7 +168,7 @@ const TypeBasedItemWomen = () => {
           }
 
           if (val === "Others") {
-            const validValues = (filterOptions[category] || [])
+            const validValues = (dynamicFilterOptions[category] || [])
               .filter(opt => opt !== "All" && opt !== "Others")
               .map(opt => opt.toLowerCase());
 
@@ -167,10 +202,9 @@ const TypeBasedItemWomen = () => {
     }
   };
 
-  // Memoize filtered and sorted products
   const filtered = useMemo(
-    () => sortCards(filterCards(products, filters,searchItem), sortBy),
-    [filters, sortBy, products,searchItem]
+    () => sortCards(filterCards(products, filters, searchItem), sortBy),
+    [filters, sortBy, products, searchItem]
   );
 
   const toggleFilter = (category, value) => {
@@ -188,93 +222,172 @@ const TypeBasedItemWomen = () => {
 
   if (loading) return <div>Loading...</div>;
 
+  // Check if the current path is exactly "/Womens-Wear"
+  const isWomensWearPage = location.pathname === "/Womens-Wear";
+
   return (
-    <div>
-      <h2 className={styles.title}>Women's Wear</h2>
+    <>
+      <Outlet />
+      {isWomensWearPage && (
+        <div>
+          <h2 className={styles.titleMain}>Women's Wear</h2>
 
-      <div className={styles.filterContainer}>
-        {Object.entries(filterOptions).map(([category, options]) => (
-          <div className={styles.optionGroup} key={category}>
-            <span className={styles.label}>
-              {category.charAt(0).toUpperCase() + category.slice(1)}:
-            </span>
-            <div className={styles.options}>
-              {options.map((item) => (
-                <button
-                  key={item}
-                  className={`${styles.optionButton} ${
-                    filters[category]?.includes(item) ? styles.active : ""
-                  }`}
-                  onClick={() => toggleFilter(category, item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        <div className={styles.optionGroup}>
-          <span className={styles.label}>Sort By:</span>
-          <div className={styles.options}>
-            {sortOptions.map((item) => (
-              <button
-                key={item}
-                className={`${styles.optionButton} ${
-                  sortBy === item ? styles.active : ""
-                }`}
-                onClick={() => setSortBy(item)}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <br />
-
-      <div className={styles.conteiner}>
-        {filtered.map((card) => (
-          <Link
-            to={`/product/${card.id}`}
-            state={{ id: `${card.id}` }}
-            className={styles.cardLink}
-            key={card.id}
-          >
-            <div className={styles.customCard}>
-              <div className={styles.cardImageContainer}>
-                <img 
-                  src={`${card.imageData}`} 
-                  alt="Product" 
-                />
-                <div className={styles.cardRating}>★ {card.rating}</div>
-              </div>
-              <div className={styles.cardContent}>
-                <h3 className={styles.cardTitle} title={card.name}>{card.name}</h3>
-                <snap className={styles.cardtype}>
-                  <snap>Type: {card.type}</snap>
-                  <snap>Brand: {card.brand}</snap>
-                </snap>
-                <div className={styles.cardPriceRow}>
-                  <div>
-                    <span className={styles.cardPrice}>৳{(card.price * (1 - card.discount / 100)).toFixed(0)}</span>
-                    {card.discount > 0 && (
-                      <span className={styles.cardOriginalPrice}>৳{card.price}</span>
-                    )}
+          <div className={styles.filterContainer}>
+            {/* Desktop Filter and Sort Options */}
+            <div className={styles.desktopFilters}>
+              {Object.entries(dynamicFilterOptions).map(([category, options]) => (
+                <div className={styles.optionGroup} key={category}>
+                  <span className={styles.label}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}:
+                  </span>
+                  <div className={styles.options}>
+                    {options.map((item) => (
+                      <button
+                        key={item}
+                        className={`${styles.optionButton} ${
+                          filters[category]?.includes(item) ? styles.active : ""
+                        }`}
+                        onClick={() => toggleFilter(category, item)}
+                      >
+                        {item}
+                      </button>
+                    ))}
                   </div>
-                  {card.discount > 0 && (
-                    <span className={styles.cardDiscount}>
-                      Save ৳{card.price - (card.price * (1 - card.discount / 100)).toFixed(0)} ({card.discount}% OFF)
-                    </span>
-                  )}
+                </div>
+              ))}
+
+              <div className={styles.optionGroup}>
+                <span className={styles.label}>Sort By:</span>
+                <div className={styles.options}>
+                  {sortOptions.map((item) => (
+                    <button
+                      key={item}
+                      className={`${styles.optionButton} ${
+                        sortBy === item ? styles.active : ""
+                      }`}
+                      onClick={() => setSortBy(item)}
+                    >
+                      {item}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
-          </Link>
-        ))}
-      </div>
-    </div>
+
+            {/* Mobile Filter and Sort Dropdowns */}
+            <div className={styles.mobileFilterContainer}>
+              <div className={`${styles.dropdownWrapper} ${styles.filterDropdownWrapper}`}>
+                <input
+                  type="checkbox"
+                  id="filterToggle"
+                  className={styles.dropdownToggle}
+                />
+                <label htmlFor="filterToggle" className={styles.dropdownLabel}>
+                  Filter
+                </label>
+                <div className={styles.dropdownContent}>
+                  {Object.entries(dynamicFilterOptions).map(([category, options]) => (
+                    <div className={styles.subDropdownWrapper} key={category}>
+                      <input
+                        type="checkbox"
+                        id={`subFilter-${category}`}
+                        className={styles.subDropdownToggle}
+                      />
+                      <label
+                        htmlFor={`subFilter-${category}`}
+                        className={styles.subDropdownLabel}
+                      >
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </label>
+                      <div className={styles.subDropdownContent}>
+                        {options.map((item) => (
+                          <button
+                            key={item}
+                            className={`${styles.optionButton} ${
+                              filters[category]?.includes(item) ? styles.active : ""
+                            }`}
+                            onClick={() => toggleFilter(category, item)}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={`${styles.dropdownWrapper} ${styles.sortDropdownWrapper}`}>
+                <input
+                  type="checkbox"
+                  id="sortToggle"
+                  className={styles.dropdownToggle}
+                />
+                <label htmlFor="sortToggle" className={styles.dropdownLabel}>
+                  Sort By
+                </label>
+                <div className={styles.dropdownContent}>
+                  {sortOptions.map((item) => (
+                    <button
+                      key={item}
+                      className={`${styles.optionButton} ${
+                        sortBy === item ? styles.active : ""
+                      }`}
+                      onClick={() => setSortBy(item)}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br />
+
+          <div className={styles.conteiner}>
+            {filtered.map((card) => (
+              <Link
+                to={`${card.id}`}
+                state={{ id: `${card.id}` }}
+                className={styles.cardLink}
+                key={card.id}
+              >
+                <div className={styles.customCard}>
+                  <div className={styles.cardImageContainer}>
+                    <img 
+                      src={`${card.imageData}`} 
+                      alt="Product" 
+                    />
+                    <div className={styles.cardRating}>★ {card.rating}</div>
+                  </div>
+                  <div className={styles.cardContent}>
+                    <h3 className={styles.cardTitle} title={card.name}>{card.name}</h3>
+                    <div className={styles.cardtype}>
+                      <span>Type: {card.type}</span>
+                      <span className={styles.cardBrand}>Brand: {card.brand}</span>
+                    </div>
+                    <div className={styles.cardPriceRow}>
+                      <div>
+                        <span className={styles.cardPrice}>৳{(card.price * (1 - card.discount / 100)).toFixed(0)}</span>
+                        {card.discount > 0 && (
+                          <span className={styles.cardOriginalPrice}>৳{card.price}</span>
+                        )}
+                      </div>
+                      {card.discount > 0 && (
+                        <span className={styles.cardDiscount}>
+                          Save ৳{card.price - (card.price * (1 - card.discount / 100)).toFixed(0)} ({card.discount}% OFF)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

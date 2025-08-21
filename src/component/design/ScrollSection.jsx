@@ -53,10 +53,8 @@ const ScrollSection = ({ title, cards }) => {
         <div className={styles.cardRow} ref={rowRef}>
           {cards.map((card, idx) => (
             <Link
-              to={`/design-demo/specific-wear/${card.id}`}
-              state={{
-                id: `${card.id}`,
-              }}
+              to={`/product/${card.id}`}
+              state={{id: `${card.id}`}}
               className={styles.cardLink}
             >
               <div className={styles.customCard} key={idx}>

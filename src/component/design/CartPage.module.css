@@ -305,3 +305,11 @@
     width: 100%;
   }
 }
+
+.itemLink {
+  text-decoration: none;
+  color: inherit;
+}
+.itemLink:hover {
+  text-decoration: underline;
+}

@@ -17,15 +17,17 @@
 /* Base Styles */
 .checkoutWrapper {
   width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--dark);
   background-color: var(--lighter-gray);
-  height: 100%;
-  overflow-y: auto; /* Allow scrolling */
+  min-height: 100vh;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .header {
@@ -66,8 +68,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
-  height: calc(100vh - 180px); /* Adjust based on header height */
-  overflow-y: auto; /* Make the grid scrollable */
+  height: calc(100vh - 180px);
+  overflow-y: auto;
 }
 
 /* Order Summary Section */
@@ -327,7 +329,7 @@
   color: var(--dark);
 }
 
-/* Checkout Form Styles - Scrollable */
+/* Checkout Form Styles */
 .checkoutFormContainer {
   height: 100%;
   overflow: hidden;
@@ -525,24 +527,295 @@
   }
 
   .itemsList {
-    max-height: 50vh; /* Allow scrolling for item list */
+    max-height: 50vh;
     overflow-y: auto;
+    padding: 0 1rem;
   }
 
   .checkoutForm {
     flex-grow: 1;
-    max-height: calc(100vh - 180px); /* Adjust form section height */
     overflow-y: auto;
+    padding: 1.25rem;
+  }
+
+  .cartItem {
+    grid-template-columns: 80px 1fr auto;
+    gap: 1rem;
+    padding: 1.25rem 0;
+  }
+
+  .itemMedia {
+    width: 80px;
+    height: 80px;
+  }
+
+  .itemName {
+    font-size: 0.95rem;
+  }
+
+  .itemVariant {
+    font-size: 0.85rem;
+  }
+
+  .priceContainer {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quantityButton {
+    width: 30px;
+    height: 30px;
+  }
+
+  .quantityValue {
+    width: 34px;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 640px) {
   .checkoutWrapper {
-    padding: 1.5rem 1rem;
+    padding: 1rem;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .checkoutTitle {
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  .backButton {
+    font-size: 0.9rem;
   }
 
   .checkoutGrid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
+  }
+
+  .orderSummary {
+    border-radius: 0.5rem;
+  }
+
+  .summaryHeader {
+    padding: 1rem;
+  }
+
+  .summaryTitle {
+    font-size: 1.15rem;
+  }
+
+  .itemsList {
+    max-height: none;
+    padding: 0 0.75rem;
+    overflow-y: visible;
+  }
+
+  .cartItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    align-items: flex-start;
+  }
+
+  .itemMedia {
+    width: 100%;
+    height: 120px;
+    max-width: 120px;
+    border-radius: 0.5rem;
+  }
+
+  .itemImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .itemDetails {
+    width: 100%;
+  }
+
+  .itemName {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .itemVariant {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .priceContainer {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .currentPrice {
+    font-size: 1rem;
+  }
+
+  .originalPrice {
+    font-size: 0.85rem;
+  }
+
+  .discountBadge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .itemActions {
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .quantityControl {
+    height: 32px;
+    width: auto;
+  }
+
+  .quantityButton {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .quantityValue {
+    width: 36px;
+    font-size: 0.95rem;
+  }
+
+  .removeButton {
+    padding: 0.5rem;
+  }
+
+  .deleteIcon {
+    font-size: 1.25rem;
+  }
+
+  .itemTotal {
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .totalPrice {
+    font-size: 1rem;
+  }
+
+  .savings {
+    font-size: 0.75rem;
+  }
+
+  .orderTotals {
+    padding: 1rem;
+  }
+
+  .totalRow {
+    font-size: 0.95rem;
+  }
+
+  .grandTotal {
+    font-size: 1.05rem;
+  }
+
+  .checkoutForm {
+    padding: 1rem;
+    padding-bottom: 2.5rem; /* Added padding to prevent footer cutoff */
+    border-radius: 0.5rem;
+  }
+
+  .formSection {
+    margin-bottom: 1.5rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .formGroup {
+    margin-bottom: 1rem;
+  }
+
+  .formLabel {
+    font-size: 0.9rem;
+  }
+
+  .formInput, .formTextarea {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .formTextarea {
+    min-height: 80px;
+  }
+
+  .radioOption {
+    padding: 0.75rem;
+  }
+
+  .radioIcon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .optionTitle {
+    font-size: 0.95rem;
+  }
+
+  .optionSubtitle {
+    font-size: 0.8rem;
+  }
+
+  .formFooter {
+    margin-top: 1.5rem;
+    padding-bottom: 1rem; /* Ensure space for security note */
+  }
+
+  .submitButton {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+
+  .securityNote {
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+    padding: 0 0.5rem;
+    line-height: 1.4; /* Improve readability */
+  }
+
+  .emptyCart {
+    padding: 2rem 1rem;
+  }
+
+  .emptyIllustration {
+    width: 140px;
+    height: 100px;
+  }
+
+  .emptyCart p {
+    font-size: 1rem;
+  }
+
+  .continueShopping {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 }

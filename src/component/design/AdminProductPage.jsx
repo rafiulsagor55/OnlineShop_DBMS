@@ -1,27 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./ProductPage.module.css";
 import { Link, Outlet } from "react-router";
-import { useParams, useLocation } from "react-router-dom";
 import { FaCartArrowDown } from "react-icons/fa";
 import { HiShoppingBag } from "react-icons/hi2";
+import { useParams,useLocation } from "react-router-dom";
 import QASection from "./QASection";
 import ReviewSection from "./ReviewSection";
 import RelatedProductPage from "./RelatedProductPage";
 import Notification from "./Notification";
 
-const ProductPage = () => {
+const AdminProductPage = () => {
   const location = useLocation();
   const { id: idLink } = useParams(); // Destructure id from useParams
   const Id = location.state?.id; // Get id from location.state
   const mainID = Id || idLink; // Use location.state.id if available, else fall back to param.id
   console.log("mainID:", mainID); // Debug: Log the resolved mainID
-
   const pageRef = useRef();
+
+  // Initialize state for product and id
   const [product, setProduct] = useState(null);
+  const [id, setId] = useState(mainID);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [mainImage, setMainImage] = useState(null);
+  const [mainImage, setMainImage] = useState(null); // State for main image
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [notificationType, setNotificationType] = useState("info");
@@ -32,52 +34,39 @@ const ProductPage = () => {
     setShowNotification(true);
   };
 
-  // Fetch product data when mainID is available
   useEffect(() => {
-    const fetchProductData = async () => {
-      console.log("fetchProductData called with ID:", mainID);
-      if (!mainID) {
-        console.log("No valid ID provided, skipping fetch.");
-        setProduct(null); // Reset product if no valid ID
-        return;
-      }
-
-      try {
-        const response = await fetch(`http://localhost:8080/api/products/${mainID}`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Product data fetched:", data);
-          setProduct(data); // Set product data
-        } else {
-          console.error("Failed to fetch product data:", response.status, response.statusText);
-          setProduct(null); // Reset product on failure
-        }
-      } catch (error) {
-        console.error("Error fetching product data:", error.message);
-        setProduct(null); // Reset product on error
-      }
-    };
-
-    fetchProductData();
-  }, [mainID]); // Depend on mainID directly
-
-  // Set default color and size when product changes
-  useEffect(() => {
-    if (product && product.colors && product.sizes) {
-      const firstColor = Object.keys(product.colors)[0];
-      setSelectedColor(firstColor || ""); // Default to first color
-      setSelectedSize(product.sizes[0] || ""); // Default to first size
+    if (product) {
+      setSelectedColor(Object.keys(product.colors)[0]); // Default to the first color
+      setSelectedSize(product.sizes[0]); // Default to the first size
     }
   }, [product]);
 
-  // Update main image when selectedColor changes
+  // Update main image whenever selected color changes
   useEffect(() => {
-    if (product && selectedColor && product.colors[selectedColor]) {
-      setMainImage(product.colors[selectedColor][0] || null); // Set first image of selected color
+    if (product && selectedColor) {
+      setMainImage(product.colors[selectedColor]?.[0]); // Set the first image of the selected color
     }
   }, [product, selectedColor]);
 
-  // If product is still loading or no product found
+  // Fetch product data when `id` is available
+  useEffect(() => {
+    const fetchProductData = async () => {
+      console.log("fetchProductData is called!");
+      if (!id) return;
+
+      const response = await fetch(`http://localhost:8080/api/products/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProduct(data); // Set product data
+      }
+    };
+
+    if (id) {
+      fetchProductData();
+    }
+  }, [mainID]);
+
+  // If product is still loading
   if (!product) {
     return <div>Loading...</div>;
   }
@@ -116,7 +105,7 @@ const ProductPage = () => {
       color: selectedColor,
       size: selectedSize,
     };
-    console.log("Adding to cart:", cartItem);
+    console.log("Inside of add to cart");
     try {
       const response = await fetch("http://localhost:8080/add-to-cart", {
         method: "POST",
@@ -137,6 +126,7 @@ const ProductPage = () => {
       }
     } catch (error) {
       showNotif(error.message, "error");
+      // setErrorMessage(error.message);
       console.error("Error occurred during add to cart:", error.message);
     }
   };
@@ -151,40 +141,37 @@ const ProductPage = () => {
     name: product.name,
     image: mainImage,
   };
-
-  const isProductPage = location.pathname === `/Womens-Wear/${product.id}`;
-  const isProductPage1 = location.pathname === `/product/${mainID}`;
-  const isProductPage2 = location.pathname === `/Kids-Wear/${product.id}`;
-  const isProductPage3 = location.pathname === `/Mens-Wear/${product.id}`;
-  const isProductPage4 = location.pathname === `/Unisex-Wear/${product.id}`;
-  const check = isProductPage || isProductPage1 || isProductPage2 || isProductPage3 || isProductPage4;
-  console.log("Check value:", check);
+  const isProductPage = location.pathname === `/admin/womens-wear/${product.id}`;
+//   const isProductPage1 = location.pathname === `/product/${product.id}`;
+  const isProductPage2 = location.pathname === `/admin/kids-wear/${product.id}`;
+  const isProductPage3 = location.pathname === `/admin/mens-wear/${product.id}`;
+  const isProductPage4 = location.pathname === `/admin/unisex/${product.id}`;
 
   return (
     <>
-      <Outlet />
-      {check && (
+      {/* <Outlet /> */}
+      { (
         <div ref={pageRef} className={styles.pageWrapper}>
-          {isProductPage3 && (
+           {isProductPage3 && (
             <div className={styles.banner}>
-              <p className={styles.bannerText}>Men's Wear/{product.id}</p>
+              <p className={styles.bannerText}>Products/Men's Wear/{product.id}</p>
             </div>
           )}
-          {isProductPage && (
+         {isProductPage && (
             <div className={styles.banner}>
-              <p className={styles.bannerText}>Women's Wear/{product.id}</p>
+              <p className={styles.bannerText}>Products/Women's Wear/{product.id}</p>
             </div>
           )}
           {isProductPage2 && (
             <div className={styles.banner}>
-              <p className={styles.bannerText}>Kid's Wear/{product.id}</p>
+              <p className={styles.bannerText}>Products/Kid's Wear/{product.id}</p>
             </div>
-          )}
+          )} 
           {isProductPage4 && (
             <div className={styles.banner}>
-              <p className={styles.bannerText}>Unisex Wear/{product.id}</p>
+              <p className={styles.bannerText}>Products/Unisex Wear/{product.id}</p>
             </div>
-          )}
+          )} 
           <div className={styles.productContainer}>
             {showNotification && (
               <Notification
@@ -290,15 +277,22 @@ const ProductPage = () => {
                 </div>
               </div>
 
-              <div className={styles.variant}>
-                <label>Select Size:</label>
-                <select value={selectedSize} onChange={handleSizeChange}>
+              <div>
+                <snap>Sizes: </snap>
+                {
+                    product.sizes.map((size) => (
+                        <snap>{size}, </snap>
+                    )
+                )
+
+                }
+                {/* <select value={selectedSize} onChange={handleSizeChange}>
                   {product.sizes.map((size) => (
                     <option key={size} value={size}>
                       {size}
                     </option>
                   ))}
-                </select>
+                </select> */}
               </div>
               {product.sizeDetails && (
                 <div className={styles.sizeDetails}>
@@ -306,17 +300,18 @@ const ProductPage = () => {
                   <br /> {product.sizeDetails}
                 </div>
               )}
+              {/* <div className={styles.trust}> {product.sizeDetails}</div> */}
 
-              <div className={styles.quantity}>
+              {/* <div className={styles.quantity}>
                 <label>Quantity:</label>
                 <div className={styles.qtyControl}>
                   <button onClick={handleDecrease}>−</button>
                   <span>{quantity}</span>
                   <button onClick={handleIncrease}>+</button>
                 </div>
-              </div>
+              </div> */}
 
-              <div className={styles.buttons}>
+              {/* <div className={styles.buttons}>
                 <button className={styles.cartBtn} onClick={handleAddToCart}>
                   <FaCartArrowDown className={styles.cartIcon} /> Add to Cart
                 </button>
@@ -325,7 +320,7 @@ const ProductPage = () => {
                     <HiShoppingBag className={styles.cartIcon} /> Buy Now
                   </button>
                 </Link>
-              </div>
+              </div> */}
 
               <div className={styles.delivery}>
                 🚚 {product.deliveryInfo}
@@ -351,16 +346,16 @@ const ProductPage = () => {
             </div>
           </div>
 
-          <div className={styles.related}>
+          {/* <div className={styles.related}>
             <h2>Related Products</h2>
             <div className={styles.relatedGrid}>
               <RelatedProductPage />
             </div>
-          </div>
+          </div> */}
         </div>
       )}
     </>
   );
 };
 
-export default ProductPage;
+export default AdminProductPage;

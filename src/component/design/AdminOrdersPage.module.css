@@ -301,7 +301,7 @@ body {
   border-radius: var(--border-radius);
   padding: 20px;
   box-shadow: var(--box-shadow);
-  margin-bottom: 30px;
+  margin-bottom: 100px;
 }
 
 .tableHeader {
@@ -500,23 +500,33 @@ body {
 }
 
 .statusBadge.processing {
-  background-color: var(--warning-light);
-  color: var(--warning);
+  background-color: #FFF4E5;
+  color: #FF9500;
 }
 
 .statusBadge.shipped {
-  background-color: var(--info-light);
-  color: var(--info);
+  background-color: #E1F0FF;
+  color: #0062FF;
 }
 
 .statusBadge.delivered {
-  background-color: var(--success-light);
-  color: var(--success);
+  background-color: #E6F7EE;
+  color: #00A651;
+}
+
+.statusBadge.ready {
+  background-color: #E1F0FF;
+  color: #0062FF;
+}
+
+.statusBadge.picked {
+  background-color: #E6F7EE;
+  color: #00A651;
 }
 
 .statusBadge.cancelled {
-  background-color: var(--danger-light);
-  color: var(--danger);
+  background-color: #FFEBEE;
+  color: #F44336;
 }
 
 .actionButtons {
@@ -753,10 +763,9 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   z-index: 1000;
-  /* padding: 50px 20px 20px; */
-  padding: 60px;
+  padding: 20px;
   backdrop-filter: blur(5px);
 }
 
@@ -764,8 +773,9 @@ body {
   background-color: white;
   border-radius: var(--border-radius);
   width: 75%;
-  height: 95%;
+  height: 90%;
   overflow-x: hidden;
+  overflow-y: auto;
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
   animation: modalFadeIn 0.3s;
 }
@@ -821,7 +831,7 @@ body {
 }
 
 .modalContent {
-  padding: 20px;
+  padding: 20px 0 0 0;
 }
 
 /* Status Timeline */
@@ -832,17 +842,8 @@ body {
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--gray-light);
-}
-
-.statusTimeline::before {
-  content: '';
-  position: absolute;
-  top: 25px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: var(--gray-light);
-  z-index: 1;
+  overflow-x: hidden;
+  transition: all 0.3s ease;
 }
 
 .timelineStep {
@@ -852,6 +853,12 @@ body {
   position: relative;
   z-index: 2;
   flex: 1;
+  min-width: 120px;
+  transition: transform 0.3s ease;
+}
+
+.timelineStep:hover {
+  transform: scale(1.05);
 }
 
 .timelineStep.completed::before {
@@ -866,6 +873,8 @@ body {
   height: 2px;
   background-color: var(--gray-light);
   left: 50%;
+  transition: background-color 0.3s ease;
+  z-index: 1;
 }
 
 .timelineStep:last-child::before {
@@ -884,19 +893,41 @@ body {
   color: var(--gray);
   font-size: 20px;
   z-index: 100;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .timelineStep.completed .stepIcon {
   background-color: var(--primary);
   color: white;
+  box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+  animation: pulse 1.5s infinite ease-in-out;
 }
+
 .timelineStep.incompleted .stepIcon {
   background-color: red;
   color: white;
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(var(--primary-rgb), 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+  }
 }
 
 .stepContent {
   text-align: center;
+  transition: color 0.3s ease;
 }
 
 .stepContent h4 {
@@ -1179,6 +1210,11 @@ body {
 .pickupTimeline .completed .stepIcon {
   background-color: #9C27B0;
   color: white;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.pickupTimeline .timelineStep.completed::before {
+  background-color: #9C27B0;
 }
 
 /* Notification Banner */
@@ -1214,18 +1250,23 @@ body {
 
 @media (max-width: 768px) {
   .header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
   }
-  
+
+  .quickStatsTabs {
+    top: 100px;
+  }
+
   .searchBox input {
     width: 100%;
   }
-  
+
   .summaryCards {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .tableControls {
     flex-direction: column;
     align-items: flex-start;
@@ -1240,19 +1281,249 @@ body {
     width: 100%;
     justify-content: center;
   }
+
+  .ordersTableContainer {
+    padding: 15px;
+    margin-bottom: 100px;
+  }
+
+  .modalOverlay {
+    padding: 15px;
+    padding-top: 20px;
+  }
+
+  .orderDetailModal {
+    width: 90%;
+    height: 95%;
+    border-radius: 8px;
+    z-index: 99999;
+  }
+
+  .modalHeader {
+    padding: 15px;
+  }
+
+  .modalHeader h2 {
+    font-size: 18px;
+  }
+
+  .closeModal {
+    font-size: 22px;
+    width: 35px;
+    height: 35px;
+  }
+
+  .modalContent {
+    padding: 0;
+  }
+
+  .statusTimeline {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    padding-bottom: 15px;
+    padding-top:15px;
+    margin-bottom: 25px;
+  }
+
+  .timelineStep {
+    min-width: 150px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .timelineStep::before {
+    top: 20px;
+    height: 2px;
+    width: 100%;
+    left: 50%;
+  }
+
+  .stepIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .timelineStep.completed .stepIcon {
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.4);
+  }
+
+  .stepContent h4 {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .stepContent p {
+    font-size: 12px;
+  }
+
+  .tracking {
+    font-size: 11px !important;
+    margin-top: 3px !important;
+  }
+
+  .notificationBanner {
+    padding: 10px;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .itemsTable {
+    font-size: 13px;
+    min-width: 100%;
+  }
+
+  .itemsTable th,
+  .itemsTable td {
+    padding: 10px 12px;
+  }
+
+  .detailSection {
+    padding: 10px;
+  }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 636px) {
+  .quickStatsTabs {
+    top: 100px;
+  }
+
   .summaryCards {
     grid-template-columns: 1fr;
   }
-  
+
   .pagination {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .pageNumbers {
     order: -1;
+  }
+
+  .ordersTableContainer {
+    padding: 10px;
+    margin-bottom: 100px;
+  }
+
+  .modalOverlay {
+    padding: 0;
+    /* padding-top: 15px; */
+  }
+
+  .orderDetailModal {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    margin: 0 !important;
+  }
+
+  .modalHeader {
+    padding: 12px;
+  }
+
+  .modalHeader h2 {
+    font-size: 16px;
+  }
+
+  .closeModal {
+    font-size: 20px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .modalContent {
+    padding: 0;
+  }
+
+  .statusTimeline {
+    gap: 5px;
+    padding-bottom: 8px;
+    padding-top: 12px;
+    margin-bottom: 10px;
+  }
+
+  .timelineStep {
+    min-width: 130px;
+  }
+
+  .timelineStep::before {
+    top: 18px;
+  }
+
+  .stepIcon {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .stepContent h4 {
+    font-size: 12px;
+  }
+
+  .stepContent p {
+    font-size: 11px;
+  }
+
+  .tracking {
+    font-size: 10px !important;
+  }
+
+  .notificationBanner {
+    padding: 8px;
+    font-size: 12px;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .detailSection {
+    padding: 8px;
+  }
+
+  .detailSection h3 {
+    font-size: 14px;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+
+  .detailContent {
+    gap: 8px;
+  }
+
+  .detailLabel,
+  .detailValue {
+    font-size: 13px;
+  }
+
+  .itemsTable {
+    font-size: 12px;
+  }
+
+  .itemsTable th,
+  .itemsTable td {
+    padding: 8px 10px;
+  }
+
+  .summaryRow {
+    font-size: 13px;
+  }
+
+  .summaryTotal {
+    font-size: 15px;
+  }
+
+  .actionButton {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .actionButton svg {
+    font-size: 14px;
   }
 }

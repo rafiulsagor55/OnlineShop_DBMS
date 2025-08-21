@@ -5,7 +5,7 @@ import styles from "./MainContent.module.css";
 const MainContent = () => {
   const Men = [
   // T-Shirts
-  { id: "1", name: "Star Trek", rating: 4.5, type: "T-Shirt", color: "Black", size: "M", brand: "Aarong", price: 700, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
+  { id: "PROD-0002", name: "Star Trek", rating: 4.5, type: "T-Shirt", color: "Black", size: "M", brand: "Aarong", price: 700, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
   { id: "2", name: "Graphic Print Tee", rating: 4.2, type: "T-Shirt", color: "White", size: "L", brand: "Texmart", price: 650, discount: 5, material: "Cotton", availability: "In Stock", category: "Summer" },
   { id: "3", name: "Vintage Logo", rating: 3.9, type: "T-Shirt", color: "Gray", size: "XL", brand: "Easy", price: 800, discount: 15, material: "Cotton", availability: "In Stock", category: "Summer" },
   { id: "4", name: "Pocket Basic", rating: 4.0, type: "T-Shirt", color: "Navy", size: "S", brand: "Boss", price: 900, discount: 0, material: "Cotton", availability: "In Stock", category: "Summer" },
@@ -59,7 +59,7 @@ const MainContent = () => {
 
  const Women = [
   // Tops & Blouses
-  { id: "1", name: "Floral Print Blouse", rating: 4.5, type: "Blouse", color: "Pink", size: "M", brand: "Kay Kraft", price: 950, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
+  { id: "PROD-0002", name: "Floral Print Blouse", rating: 4.5, type: "Blouse", color: "Pink", size: "M", brand: "Kay Kraft", price: 950, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
   { id: "2", name: "Silk Evening Top", rating: 4.7, type: "Top", color: "Black", size: "S", brand: "Richman", price: 1500, discount: 15, material: "Silk", availability: "In Stock", category: "Party" },
   
   // Dresses

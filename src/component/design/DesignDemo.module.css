@@ -1,7 +1,7 @@
 .layout {
   display: grid;
   grid-template-rows: auto 1fr;
-  height: 100vh;
+  min-height: 100vh; /* Use min-height to avoid clipping by browser UI */
   margin: 0;
   font-family: sans-serif;
   background: #111;
@@ -11,23 +11,21 @@
 .container {
   display: grid;
   position: sticky;
-  grid-template-columns: auto 1fr;
   overflow: hidden;
+  grid-template-columns: auto 1fr; /* Default for desktop */
+  height: calc(100vh - 56px); /* Account for topbar */
   margin-top: 56px;
-  height: calc(100vh - 56px);
   transition: all 0.3s ease;
 }
+
 .outletWrapper {
   overflow-y: auto;
-  height: 100vh;
-  padding: 20px;
+  height: calc(100vh - 56px); /* Match container height */
   scroll-behavior: smooth;
-
-  /* Optional but improves mobile scrolling on iOS */
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch; /* For smooth iOS scrolling */
 }
 
-/* Custom scrollbar for WebKit browsers (Chrome, Edge, Safari) */
+/* Custom scrollbar for WebKit browsers */
 .outletWrapper::-webkit-scrollbar {
   width: 8px;
 }
@@ -44,4 +42,28 @@
 
 .outletWrapper::-webkit-scrollbar-thumb:hover {
   background: #3b3a3a;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr; /* Single column when sidebar is hidden */
+    position: relative; /* Remove sticky, not needed */
+    overflow: visible; /* Allow overflow for mobile */
+  }
+
+  .outletWrapper {
+    width: 100%; /* Ensure outlet takes full width */
+    height: calc(100dvh - 56px); /* Use 100dvh for mobile viewport */
+    position: relative;
+  }
+
+  /* Ensure sidebar is positioned correctly when visible */
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000; /* Ensure sidebar is above outlet */
+  }
 }

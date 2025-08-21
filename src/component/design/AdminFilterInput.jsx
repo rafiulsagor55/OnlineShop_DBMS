@@ -1,42 +1,118 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiPlus, FiSave, FiX, FiEdit2, FiTrash2, FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { BsCheckLg, BsThreeDotsVertical } from "react-icons/bs";
+import { BsCheckLg } from "react-icons/bs";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css"; // Fixed import
 import styles from "./AdminFilterInput.module.css";
+import { useLocation } from "react-router-dom";
 
 const filterFields = [
-  { id: "category", label: "Category", placeholder: "e.g. Clothing, Electronics" },
-  { id: "type", label: "Type", placeholder: "e.g. T-Shirt, Smartphone" },
+  { id: "category", label: "Category", placeholder: "e.g. Casual, Winter" },
+  { id: "type", label: "Type", placeholder: "e.g. T-Shirt, Pant" },
   { id: "color", label: "Color", placeholder: "e.g. Red, Blue" },
   { id: "size", label: "Size", placeholder: "e.g. S, M, L" },
-  { id: "brand", label: "Brand", placeholder: "e.g. Nike, Apple" },
+  { id: "brand", label: "Brand", placeholder: "e.g. Nike, Easy" },
   { id: "material", label: "Material", placeholder: "e.g. Cotton, Leather" },
 ];
 
 const AdminFilterInput = () => {
-  const [filters, setFilters] = useState({
-    category: ["Clothing", "Electronics"],
-    type: ["T-Shirt", "Jeans"],
-    color: ["Red", "Blue"],
-    size: ["S", "M", "L"],
-    brand: ["Nike", "Adidas"],
-    material: ["Cotton", "Polyester"]
-  });
+  const location = useLocation();
+  const gender = location.state?.gender || "Unisex";
+  console.log("Current gender:", gender);
 
-  const [inputs, setInputs] = useState({});
+  const [filters, setFilters] = useState({
+    category: [],
+    type: [],
+    color: [],
+    size: [],
+    brand: [],
+    material: [],
+  });
+  const [inputs, setInputs] = useState({
+    category: "",
+    type: "",
+    color: "",
+    size: "",
+    brand: "",
+    material: "",
+  });
   const [editState, setEditState] = useState({ field: null, index: null });
   const [tempValue, setTempValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [expandedCards, setExpandedCards] = useState({});
+  const [expandedCards, setExpandedCards] = useState({}); // Fixed typo
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, field: null, value: null });
 
   const toggleCardExpand = (fieldId) => {
-    setExpandedCards(prev => ({
+    setExpandedCards((prev) => ({
       ...prev,
-      [fieldId]: !prev[fieldId]
+      [fieldId]: !prev[fieldId],
     }));
   };
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        console.log("Fetching filters for gender:", gender);
+        const response = await fetch(
+          `http://localhost:8080/api/filters/get-filters?gender=${encodeURIComponent(gender)}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error || "Failed to fetch filters");
+        }
+
+        const data = await response.json();
+        console.log("Fetched filter data:", data);
+        setFilters((prev) => ({
+          ...prev,
+          ...data,
+          category: data.category || [],
+          type: data.type || [],
+          color: data.color || [],
+          size: data.size || [],
+          brand: data.brand || [],
+          material: data.material || [],
+        }));
+      } catch (error) {
+        console.error("Error fetching filters:", error);
+        toast.error(`Error fetching filters: ${error.message}`);
+        setFilters({
+          category: [],
+          type: [],
+          color: [],
+          size: [],
+          brand: [],
+          material: [],
+        });
+      }
+    };
+
+    fetchFilters();
+  }, [gender]);
+
+  useEffect(() => {
+    setInputs({
+      category: "",
+      type: "",
+      color: "",
+      size: "",
+      brand: "",
+      material: "",
+    });
+    setSelectedCategory("");
+    setExpandedCards({});
+    setEditState({ field: null, index: null });
+    setTempValue("");
+    setDeleteConfirm({ show: false, field: null, value: null });
+  }, [gender]);
 
   const handleChange = (field, value) => {
     setInputs((prev) => ({ ...prev, [field]: value }));
@@ -60,6 +136,7 @@ const AdminFilterInput = () => {
     }));
 
     setInputs((prev) => ({ ...prev, [field]: "" }));
+    setExpandedCards((prev) => ({ ...prev, [field]: true }));
     toast.success(`"${value}" added to ${field}`);
   };
 
@@ -76,8 +153,11 @@ const AdminFilterInput = () => {
   const saveEdit = () => {
     const { field, index } = editState;
     const trimmed = tempValue.trim();
-    if (!trimmed) return;
-    
+    if (!trimmed) {
+      toast.warning("Please enter a valid value");
+      return;
+    }
+
     if (filters[field].includes(trimmed)) {
       toast.warning(`"${trimmed}" already exists in ${field}`);
       return;
@@ -94,7 +174,7 @@ const AdminFilterInput = () => {
   };
 
   const showDeleteConfirm = (field, value) => {
-    setDeleteConfirm({ show: true, field, value });
+    setDeleteConfirm({ show: true, field, value }); // Fixed typo
   };
 
   const cancelDelete = () => {
@@ -111,9 +191,41 @@ const AdminFilterInput = () => {
     cancelDelete();
   };
 
-  const handleSubmit = () => {
-    toast.success("Filters would be saved to backend here!");
-    console.log("Filters to be saved:", filters);
+  const handleSubmit = async () => {
+    try {
+      // Validate filters state
+      
+       const filters2= {
+          category: Array.isArray(filters.category) ? filters.category : [],
+          type: Array.isArray(filters.type) ? filters.type : [],
+          color: Array.isArray(filters.color) ? filters.color : [],
+          size: Array.isArray(filters.size) ? filters.size : [],
+          brand: Array.isArray(filters.brand) ? filters.brand : [],
+          material: Array.isArray(filters.material) ? filters.material : [],
+          gender: [gender],
+        };
+      
+      console.log("Filters state:", filters2);
+
+      const response = await fetch("http://localhost:8080/api/filters/save-filters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filters2),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to save filters");
+      }
+
+      toast.success("Filters saved successfully!");
+    } catch (error) {
+      console.error("Error saving filters:", error);
+      toast.error(`Error saving filters: ${error.message}`);
+    }
   };
 
   const handleKeyPress = (e, field) => {
@@ -124,8 +236,8 @@ const AdminFilterInput = () => {
 
   return (
     <div className={styles.page}>
-      <ToastContainer 
-        position="top-right" 
+      <ToastContainer
+        position="top-right"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -136,23 +248,18 @@ const AdminFilterInput = () => {
         pauseOnHover
       />
 
-      {/* Delete Confirmation Modal */}
       {deleteConfirm.show && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to delete "{deleteConfirm.value}" from {deleteConfirm.field}?</p>
+            <p>
+              Are you sure you want to delete "{deleteConfirm.value}" from {deleteConfirm.field}?
+            </p>
             <div className={styles.modalActions}>
-              <button 
-                className={styles.modalCancel}
-                onClick={cancelDelete}
-              >
+              <button className={styles.modalCancel} onClick={cancelDelete}>
                 Cancel
               </button>
-              <button 
-                className={styles.modalConfirm}
-                onClick={confirmDelete}
-              >
+              <button className={styles.modalConfirm} onClick={confirmDelete}>
                 Delete
               </button>
             </div>
@@ -162,37 +269,19 @@ const AdminFilterInput = () => {
 
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Product Filter Management</h2>
+          <h2 className={styles.title}>Product Filter Management ({gender})</h2>
           <p className={styles.subtitle}>
-            Manage filter options (Demo - No backend connected)
+            Manage filter options for {gender} products
           </p>
-        </div>
-
-        <div className={styles.controls}>
-          <div className={styles.categorySelector}>
-            <label className={styles.selectorLabel}>Filter by Category:</label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className={styles.select}
-            >
-              <option value="">All Categories</option>
-              {filters.category?.map((cat, index) => (
-                <option key={index} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         <div className={styles.filterGrid}>
           {filterFields.map((field) => (
-            <div key={field.id} className={`${styles.filterCard} ${expandedCards[field.id] ? styles.expanded : ''}`}>
-              <div 
-                className={styles.cardHeader} 
-                onClick={() => toggleCardExpand(field.id)}
-              >
+            <div
+              key={field.id}
+              className={`${styles.filterCard} ${expandedCards[field.id] ? styles.expanded : ""}`}
+            >
+              <div className={styles.cardHeader} onClick={() => toggleCardExpand(field.id)}>
                 <div className={styles.cardTitleWrapper}>
                   <h3 className={styles.cardTitle}>{field.label}</h3>
                   <span className={styles.itemCount}>
@@ -299,12 +388,9 @@ const AdminFilterInput = () => {
         </div>
 
         <div className={styles.footer}>
-          <button
-            className={styles.submitButton}
-            onClick={handleSubmit}
-          >
+          <button className={styles.submitButton} onClick={handleSubmit}>
             <FiSave className={styles.saveIcon} />
-            Save All Filters (Demo)
+            Save All Filters
           </button>
         </div>
       </div>

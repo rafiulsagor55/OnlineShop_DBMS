@@ -6,6 +6,7 @@ import Modal from "./Modal.jsx";
 import Notification from "./Notification.jsx";
 
 const predefinedOptions = {
+  gender: ["Male", "Female", "Kids", "Unisex", "Others"],
   category: ["Casual", "Formal", "Party", "Traditional", "Others"],
   type: ["Shirt", "T-Shirt", "Jeans", "Panjabi", "Others"],
   brand: ["Aarong", "Cats Eye", "Yellow", "Dorjibari", "Others"],
@@ -61,10 +62,12 @@ const ProductInputPage = () => {
     discount: "",
     rating: "",
     sizes: [],
+    sizeDetails: "",
     colors: {},
     deliveryInfo: "",
     returnPolicy: "",
     trustInfo: "",
+    gender:"",
   });
 
   const [showCustomInput, setShowCustomInput] = useState({
@@ -345,6 +348,7 @@ const publishProduct = async (e) => {
           "Content-Type": "application/json", // Sending JSON data
         },
         body: JSON.stringify(formData), // Convert formData object to JSON string
+          credentials: "include", // Include credentials for session management
       });
 
       if (response.ok) {
@@ -504,11 +508,11 @@ const publishProduct = async (e) => {
               <div className={styles.section}>
                 <h3 className={styles.sectionTitle}>Classification</h3>
                 <div className={styles.grid2}>
-                  {["category", "type", "brand", "material"].map((field) => (
+                  {["gender","category", "type", "brand", "material"].map((field) => (
                     <div className={styles.row} key={field}>
                       <label>
                         {field[0].toUpperCase() + field.slice(1)}
-                        {["type", "brand"].includes(field) && (
+                        {["gender","type", "brand"].includes(field) && (
                           <span className={styles.required}>*</span>
                         )}
                       </label>
@@ -643,6 +647,16 @@ const publishProduct = async (e) => {
                       </div>
                     </div>
                   )}
+                </div>
+                <div className={styles.row}>
+                  <label>Size Details</label>
+                  <textarea
+                    name="sizeDetails"
+                    value={formData.sizeDetails}
+                    onChange={handleChange}
+                    placeholder="e.g. Size chart or specific measurements"
+                    rows="4"
+                  />
                 </div>
               </div>
 
@@ -883,6 +897,9 @@ const publishProduct = async (e) => {
 
               <div className={styles.overviewSection}>
                 <h4>Classification</h4>
+                <div className={styles.overviewRow}>
+                  <strong>Gender:</strong> {formData.gender}
+                </div>
                 <div className={styles.overviewRow}>
                   <strong>Category:</strong> {formData.category}
                 </div>

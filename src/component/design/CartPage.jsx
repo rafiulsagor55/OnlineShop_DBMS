@@ -20,7 +20,7 @@ const CartPage = () => {
   // Helper function to calculate discounted price
   const getPrice = (item) => {
     const price = item.price || 0; // Fallback to 0 if price is missing
-    const discount = item.discount || 0;  // Fallback to 0 if discount is missing
+    const discount = item.discount || 0; // Fallback to 0 if discount is missing
     return price - (price * discount) / 100;
   };
 
@@ -43,13 +43,16 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await fetch("http://localhost:8080/get-all-cart-item", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          "http://localhost:8080/get-all-cart-item",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
         if (!response.ok) {
           const error = await response.text();
@@ -67,13 +70,35 @@ const CartPage = () => {
     fetchCartItems();
   }, []);
 
-  const handleRemove = (id) => {
+  const handleRemove = async (id) => {
     if (
       window.confirm(
         "Are you sure you want to remove this item from your cart?"
       )
     ) {
       setCartItems((prev) => prev.filter((item) => item.id !== id));
+      try {
+        const response = await fetch(
+          `http://localhost:8080/remove-cart-item/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error);
+        }
+
+        showNotif("Item removed from cart successfully", "success");
+      } catch (error) {
+        showNotif(error.message, "error");
+        console.error("Error removing item from cart:", error);
+      }
     }
   };
 
@@ -119,7 +144,7 @@ const CartPage = () => {
       {cartItems.length === 0 ? (
         <div className={styles.emptyCart}>
           <p>Your cart is empty!</p>
-          <Link to="/products" className={styles.continueShopping}>
+          <Link to="/" className={styles.continueShopping}>
             Continue Shopping
           </Link>
         </div>
@@ -144,7 +169,8 @@ const CartPage = () => {
             {cartItems.map((item) => {
               const price = getPrice(item);
               const totalPrice = price * item.quantity;
-              const totalOriginal = item.price && item.quantity ? item.price * item.quantity : 0;
+              const totalOriginal =
+                item.price && item.quantity ? item.price * item.quantity : 0;
               const totalDiscount = totalOriginal - totalPrice;
 
               return (
@@ -167,8 +193,17 @@ const CartPage = () => {
                   />
                   <div className={styles.cartItemDetailsWithDelete}>
                     <div className={styles.cartItemDetailsContent}>
-                      <h2 className={styles.itemTitle}>{item.name}</h2>
-                      <p className={styles.itemMeta}>Size: {item.size || 'N/A'}</p>
+                      <Link
+                        to={`/product/${item.productId}`}
+                        state={{ id: `${item.productId}`}}
+                        className={styles.itemLink}
+                        key={item.id}
+                      >
+                        <h2 className={styles.itemTitle}>{item.name}</h2>
+                      </Link>
+                      <p className={styles.itemMeta}>
+                        Size: {item.size || "N/A"}
+                      </p>
                       <div className={styles.priceContainer}>
                         <span className={styles.price}>
                           ৳{totalPrice.toFixed(2)}
@@ -239,7 +274,7 @@ const CartPage = () => {
                   <span>{delivery === 0 ? "FREE" : `৳${delivery}`}</span>
                 </div>
                 <div className={styles.total}>
-                  <span>Total  </span>
+                  <span>Total </span>
                   <span>৳{total.toFixed(2)}</span>
                 </div>
                 <Link
