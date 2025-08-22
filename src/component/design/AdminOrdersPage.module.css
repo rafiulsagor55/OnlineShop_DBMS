@@ -1005,6 +1005,47 @@ body {
   max-width: 60%;
 }
 
+.statusSelectContainer1 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 60%; /* Matches .detailValue max-width */
+}
+
+.statusSelect1 {
+  font-weight: 500;
+  color: var(--dark);
+  font-size: 14px; /* Matches .detailLabel and .detailValue */
+  border: 1px solid var(--gray);
+  border-radius: 4px;
+  padding: 4px 8px;
+  background-color: var(--white);
+  appearance: none; /* Removes default browser styling */
+  cursor: pointer;
+  width: 120px;
+}
+
+.statusSelect1:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.statusSelect1 option[value="Paid"] {
+  color: var(--success); 
+}
+
+.statusSelect1 option[value="Pending"] {
+  color: var(--danger); 
+}
+
+.selectArrow1 {
+  margin-left: -20px;
+  pointer-events: none;
+  color: var(--gray);
+}
+
+
+
 .detailValue.paid {
   color: var(--success);
 }
@@ -1248,7 +1289,7 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 980px) {
   .header {
     flex-direction: row;
     align-items: center;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   AiOutlineClockCircle,
   AiOutlineCheckCircle,
@@ -14,6 +14,7 @@ import {
   BsBellFill,
   BsBox,
 } from "react-icons/bs";
+import { UserContext } from "../UserContext";
 import { RiNotificationBadgeLine } from "react-icons/ri";
 import { MdOutlineLocalShipping, MdOutlinePayment } from "react-icons/md";
 import { FiPrinter, FiMail } from "react-icons/fi";
@@ -22,6 +23,7 @@ import styles from "./CurrentOrderPage.module.css";
 import Notification from "./Notification";
 
 const CurrentOrderPage = () => {
+  const { searchItem } = useContext(UserContext);
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -139,7 +141,7 @@ const CurrentOrderPage = () => {
       if (selectedOrder.deliveryMethod === "home") {
         doc.text(`Address: ${selectedOrder.address}`, 40, 200);
       } else {
-        doc.text(`Pickup Location: ${selectedOrder.pickupLocation}`, 40, 200);
+        doc.text(`Pickup Location: Mirpur-10, Dhaka`, 40, 200);
       }
 
       // Order Information
@@ -150,7 +152,7 @@ const CurrentOrderPage = () => {
       doc.setFontSize(10);
       doc.text(`Delivery Method: ${selectedOrder.deliveryMethod === "home" ? "Home Delivery" : "Store Pickup"}`, 300, 155);
       doc.text(`Payment Method: ${selectedOrder.paymentMethod === "COD" ? "Cash on Delivery" : "bKash"}`, 300, 170);
-      doc.text(`Payment Status: ${selectedOrder.payment === "paid" ? "Paid" : "Pending"}`, 300, 185);
+      doc.text(`Payment Status: ${selectedOrder.payment === "Paid" ? "Paid" : "Pending"}`, 300, 185);
       doc.text(`Status: ${selectedOrder.status ? (selectedOrder.status === "ready" ? "Ready for Pickup" : selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)) : "N/A"}`, 300, 200);
 
       // Draw another line
@@ -247,8 +249,8 @@ const CurrentOrderPage = () => {
   const filteredOrders = orders.filter(
     (order) =>
       (order.id ? order.id.toString().toLowerCase() : "").includes(
-        searchTerm.toLowerCase()
-      ) || order.customer.toLowerCase().includes(searchTerm.toLowerCase())
+        searchItem.toLowerCase()
+      ) || order.customer.toLowerCase().includes(searchItem.toLowerCase())
   );
 
   const getStatusBadgeClass = (status) => {
@@ -279,7 +281,7 @@ const CurrentOrderPage = () => {
       <div className={styles.orderTrackingContainer}>
         <h1 className={styles.pageTitle}>Your Orders</h1>
 
-        <div className={styles.searchContainer}>
+        {/* <div className={styles.searchContainer}>
           <input
             type="text"
             placeholder="Search by Order ID or Customer Name"
@@ -287,7 +289,7 @@ const CurrentOrderPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.searchInput}
           />
-        </div>
+        </div> */}
 
         {filteredOrders.length === 0 ? (
           <div className={styles.noOrders}>No orders found</div>
@@ -342,7 +344,7 @@ const CurrentOrderPage = () => {
 
                 {order.deliveryMethod === "pickup" && (
                   <div className={styles.pickupInfo}>
-                    <BsShop /> {order.pickupLocation}
+                    <BsShop /> Mirpur-10, Dhaka
                   </div>
                 )}
               </div>
@@ -649,7 +651,7 @@ const CurrentOrderPage = () => {
                       styles[selectedOrder.payment]
                     }`}
                   >
-                    {selectedOrder.payment === "paid" ? "Paid" : "Pending"}
+                    {selectedOrder.payment === "Paid" ? "Paid" : "Pending"}
                   </span>
                 </div>
               </div>
@@ -665,7 +667,7 @@ const CurrentOrderPage = () => {
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Store Location:</span>
                     <span className={styles.detailValue}>
-                      {selectedOrder.pickupLocation}
+                      Mirpur-10, Dhaka
                     </span>
                   </div>
                   <div className={styles.detailRow}>
@@ -677,7 +679,7 @@ const CurrentOrderPage = () => {
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Contact:</span>
                     <span className={styles.detailValue}>
-                      {selectedOrder.storeContact || "Store Phone Number"}
+                      {selectedOrder.storeContact || "01712345678"}
                     </span>
                   </div>
                 </div>

@@ -216,7 +216,7 @@ const AdminTypeBasedItemUnisex = () => {
   const fetchProducts = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/products/get-all-unisex-products"
+        "http://localhost:8080/api/products/get-all-unisex-products-admin",
       );
       const data = await response.json();
       setProducts(data);

@@ -55,6 +55,11 @@ const router = createBrowserRouter([
         element: <MainContent />,
       },
       {
+        path: "home/:id",
+        element: <ProductPage />,
+
+      },
+      {
         path: "Mens-Wear",
         element: <TypeBasedItem />,
         children: [
@@ -98,6 +103,7 @@ const router = createBrowserRouter([
         path: "product/:id",
         element: <ProductPage />,
       },
+      
       {
         path: "/cartPage",
         element: <CartPage />,

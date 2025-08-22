@@ -157,7 +157,8 @@ const ProductPage = () => {
   const isProductPage2 = location.pathname === `/Kids-Wear/${product.id}`;
   const isProductPage3 = location.pathname === `/Mens-Wear/${product.id}`;
   const isProductPage4 = location.pathname === `/Unisex-Wear/${product.id}`;
-  const check = isProductPage || isProductPage1 || isProductPage2 || isProductPage3 || isProductPage4;
+  const isProductPage5 = location.pathname === `/home/${product.id}`;
+  const check = isProductPage || isProductPage1 || isProductPage2 || isProductPage3 || isProductPage4 || isProductPage5;
   console.log("Check value:", check);
 
   return (
@@ -354,7 +355,7 @@ const ProductPage = () => {
           <div className={styles.related}>
             <h2>Related Products</h2>
             <div className={styles.relatedGrid}>
-              <RelatedProductPage />
+              <RelatedProductPage productType={product.type} category={product.category} productId={mainID}/>
             </div>
           </div>
         </div>

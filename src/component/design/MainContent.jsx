@@ -1,101 +1,121 @@
 import React from "react";
 import ScrollSection from "./ScrollSection";
 import styles from "./MainContent.module.css";
+import {useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 
 const MainContent = () => {
-  const Men = [
-  // T-Shirts
-  { id: "PROD-0002", name: "Star Trek", rating: 4.5, type: "T-Shirt", color: "Black", size: "M", brand: "Aarong", price: 700, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "2", name: "Graphic Print Tee", rating: 4.2, type: "T-Shirt", color: "White", size: "L", brand: "Texmart", price: 650, discount: 5, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "3", name: "Vintage Logo", rating: 3.9, type: "T-Shirt", color: "Gray", size: "XL", brand: "Easy", price: 800, discount: 15, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "4", name: "Pocket Basic", rating: 4.0, type: "T-Shirt", color: "Navy", size: "S", brand: "Boss", price: 900, discount: 0, material: "Cotton", availability: "In Stock", category: "Summer" },
+  const [men, setMen] = useState([]);
+  const [women, setWomen] = useState([]);
+  const [kid, setKid] = useState([]);
+  const [unisex, setUnisex] = useState([]);
+  const [top, setTop] = useState([]);
+  
 
-  // Shirts
-  { id: "5", name: "Snow Eagle", rating: 4.7, type: "Shirt", color: "White", size: "L", brand: "Yellow", price: 1200, discount: 12, material: "Linen", availability: "In Stock", category: "Formal" },
-  { id: "6", name: "Classic Oxford", rating: 4.3, type: "Shirt", color: "Blue", size: "M", brand: "Aarong", price: 1500, discount: 10, material: "Cotton", availability: "In Stock", category: "Formal" },
-  { id: "7", name: "Denim Shirt", rating: 4.1, type: "Shirt", color: "Blue", size: "XL", brand: "Texmart", price: 1800, discount: 20, material: "Denim", availability: "In Stock", category: "Casual" },
-  { id: "8", name: "Floral Print", rating: 3.8, type: "Shirt", color: "Pink", size: "S", brand: "Easy", price: 1100, discount: 5, material: "Polyester", availability: "Out of Stock", category: "Summer" },
+  const fetchProductsMen = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products/get-all-mens-products-limit");
+        const data = await response.json();
+        setMen(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  // Pants & Jeans
-  { id: "9", name: "Red Sky", rating: 2.0, type: "Jeans", color: "Blue", size: "XL", brand: "Cats Eye", price: 1500, discount: 13, material: "Denim", availability: "Out of Stock", category: "Winter" },
-  { id: "10", name: "Slim Fit Chinos", rating: 4.4, type: "Pants", color: "Black", size: "32", brand: "Aarong", price: 2000, discount: 15, material: "Cotton", availability: "In Stock", category: "Formal" },
-  { id: "11", name: "Cargo Pants", rating: 4.0, type: "Pants", color: "Olive", size: "34", brand: "Texmart", price: 1700, discount: 10, material: "Cotton", availability: "In Stock", category: "Casual" },
-  { id: "12", name: "Skinny Jeans", rating: 3.7, type: "Jeans", color: "Black", size: "30", brand: "Easy", price: 2200, discount: 25, material: "Denim", availability: "In Stock", category: "Casual" },
+    const fetchProductsWomen = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products/get-all-womens-products-limit");
+        const data = await response.json();
+        setWomen(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  // Jackets & Outerwear
-  { id: "13", name: "Remember Me", rating: 4.3, type: "Jacket", color: "Red", size: "S", brand: "Richman", price: 2500, discount: 14, material: "Polyester", availability: "In Stock", category: "Winter" },
-  { id: "14", name: "Bomber Jacket", rating: 4.6, type: "Jacket", color: "Black", size: "M", brand: "Boss", price: 3500, discount: 20, material: "Polyester", availability: "In Stock", category: "Winter" },
-  { id: "15", name: "Denim Jacket", rating: 4.2, type: "Jacket", color: "Blue", size: "L", brand: "Texmart", price: 2800, discount: 15, material: "Denim", availability: "In Stock", category: "Winter" },
-  { id: "16", name: "Leather Jacket", rating: 4.8, type: "Jacket", color: "Black", size: "XL", brand: "Richman", price: 6500, discount: 30, material: "Leather", availability: "In Stock", category: "Winter" },
+    const fetchProductsKids = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products/get-all-kids-products-limit");
+        const data = await response.json();
+        setKid(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  // Sportswear
-  { id: "21", name: "Sporty Runner", rating: 4.1, type: "Tracksuit", color: "Blue", size: "M", brand: "Richman", price: 2000, discount: 12, material: "Polyester", availability: "In Stock", category: "Sportswear" },
-  { id: "22", name: "Gym Shorts", rating: 3.9, type: "Shorts", color: "Black", size: "L", brand: "Texmart", price: 800, discount: 10, material: "Polyester", availability: "In Stock", category: "Sportswear" },
-  { id: "23", name: "Running T-Shirt", rating: 4.0, type: "T-Shirt", color: "Red", size: "XL", brand: "Easy", price: 900, discount: 5, material: "Polyester", availability: "In Stock", category: "Sportswear" },
-  { id: "24", name: "Training Pants", rating: 4.2, type: "Pants", color: "Gray", size: "M", brand: "Boss", price: 1500, discount: 15, material: "Blended", availability: "In Stock", category: "Sportswear" },
+    const fetchProductsUnisex = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products/get-all-unisex-products-limit");
+        const data = await response.json();
+        setUnisex(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  // Winter Wear
-  { id: "25", name: "Winter Bliss", rating: 4.8, type: "Sweater", color: "Gray", size: "M", brand: "Ecstasy", price: 3200, discount: 20, material: "Wool", availability: "In Stock", category: "Winter" },
-  { id: "26", name: "Woolen Hoodie", rating: 4.5, type: "Hoodie", color: "Black", size: "L", brand: "Aarong", price: 2800, discount: 25, material: "Wool", availability: "In Stock", category: "Winter" },
-  { id: "27", name: "Thermal Jacket", rating: 4.6, type: "Jacket", color: "Navy", size: "XL", brand: "Richman", price: 4500, discount: 30, material: "Polyester", availability: "In Stock", category: "Winter" },
-  { id: "28", name: "Fleece Sweater", rating: 4.3, type: "Sweater", color: "Maroon", size: "M", brand: "Texmart", price: 2200, discount: 15, material: "Wool", availability: "In Stock", category: "Winter" },
+    const fetchProductsTop = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products/get-all-products");
+        const data = await response.json();
+        setTop(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
+   
   
-  // Festival & Wedding
-  { id: "33", name: "Silk Sherwani", rating: 4.9, type: "Sherwani", color: "Gold", size: "M", brand: "Dorjibari", price: 7500, discount: 35, material: "Silk", availability: "In Stock", category: "Wedding" },
-  { id: "34", name: "Embroidered Kurta", rating: 4.7, type: "Panjabi", color: "White", size: "L", brand: "Yellow", price: 3500, discount: 25, material: "Cotton", availability: "In Stock", category: "Festival" },
-  { id: "35", name: "Traditional Dhoti", rating: 4.5, type: "Dhoti", color: "White", size: "XL", brand: "Aarong", price: 1200, discount: 10, material: "Cotton", availability: "In Stock", category: "Wedding" },
-  { id: "36", name: "Festive Kurta", rating: 4.3, type: "Panjabi", color: "Green", size: "M", brand: "Dorjibari", price: 2800, discount: 20, material: "Silk", availability: "In Stock", category: "Festival" },
-  { id: "17", name: "Summer Breeze", rating: 4.2, type: "Panjabi", color: "White", size: "L", brand: "Aarong", price: 1800, discount: 15, material: "Cotton", availability: "In Stock", category: "Festival" },
-  { id: "18", name: "Festive Shine", rating: 4.7, type: "Sherwani", color: "Maroon", size: "XL", brand: "Yellow", price: 5500, discount: 30, material: "Silk", availability: "In Stock", category: "Wedding" },
-  { id: "19", name: "Wedding Kurta", rating: 4.5, type: "Panjabi", color: "Blue", size: "M", brand: "Dorjibari", price: 2500, discount: 20, material: "Silk", availability: "In Stock", category: "Festival" },
-  { id: "20", name: "Embroidered Kurta", rating: 4.3, type: "Panjabi", color: "Black", size: "L", brand: "Aarong", price: 2200, discount: 15, material: "Cotton", availability: "In Stock", category: "Festival" },
-  // Blazers & Formal
-  { id: "37", name: "Casual Classic", rating: 3.8, type: "Blazer", color: "Black", size: "L", brand: "Cats Eye", price: 4000, discount: 18, material: "Wool", availability: "In Stock", category: "Formal" },
-  { id: "38", name: "Slim Fit Blazer", rating: 4.2, type: "Blazer", color: "Navy", size: "M", brand: "Boss", price: 4500, discount: 20, material: "Wool", availability: "In Stock", category: "Formal" },
-  { id: "39", name: "Double Breasted", rating: 4.0, type: "Blazer", color: "Gray", size: "XL", brand: "Richman", price: 5000, discount: 25, material: "Wool", availability: "In Stock", category: "Formal" },
-  { id: "40", name: "Linen Blazer", rating: 3.9, type: "Blazer", color: "Blue", size: "L", brand: "Aarong", price: 3800, discount: 15, material: "Linen", availability: "In Stock", category: "Formal" }
-];
+    useEffect(() => {
+      fetchProductsMen();
+      fetchProductsWomen();
+      fetchProductsKids();
+      fetchProductsUnisex();
+      fetchProductsTop();
+    }, []);
+  const location1 = location.pathname=== "/";
 
- const Women = [
-  // Tops & Blouses
-  { id: "PROD-0002", name: "Floral Print Blouse", rating: 4.5, type: "Blouse", color: "Pink", size: "M", brand: "Kay Kraft", price: 950, discount: 10, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "2", name: "Silk Evening Top", rating: 4.7, type: "Top", color: "Black", size: "S", brand: "Richman", price: 1500, discount: 15, material: "Silk", availability: "In Stock", category: "Party" },
-  
-  // Dresses
-  { id: "3", name: "Summer Maxi Dress", rating: 4.8, type: "Dress", color: "Yellow", size: "L", brand: "Yellow", price: 2200, discount: 20, material: "Chiffon", availability: "In Stock", category: "Summer" },
-  { id: "4", name: "Cocktail Party Dress", rating: 4.9, type: "Dress", color: "Red", size: "M", brand: "Ecstasy", price: 3500, discount: 25, material: "Velvet", availability: "In Stock", category: "Party" },
-  
-  // Bottoms
-  { id: "5", name: "High-Waist Jeans", rating: 4.3, type: "Jeans", color: "Blue", size: "30", brand: "Texmart", price: 1800, discount: 15, material: "Denim", availability: "In Stock", category: "Formal" },
-  { id: "6", name: "Office Pencil Skirt", rating: 4.2, type: "Skirt", color: "Black", size: "M", brand: "Aarong", price: 1200, discount: 10, material: "Polyester", availability: "In Stock", category: "Formal" },
-  
-  // Ethnic Wear
-  { id: "7", name: "Banarasi Silk Saree", rating: 4.9, type: "Saree", color: "Maroon", size: "M", brand: "Dorjibari", price: 5500, discount: 30, material: "Silk", availability: "In Stock", category: "Party" },
-  { id: "8", name: "Cotton Salwar Kameez", rating: 4.5, type: "Salwar Kameez", color: "Blue", size: "L", brand: "Aarong", price: 2200, discount: 20, material: "Cotton", availability: "In Stock", category: "Summer" },
-  
-  // Outerwear
-  { id: "9", name: "Wool Winter Coat", rating: 4.6, type: "Jacket", color: "Beige", size: "M", brand: "Ecstasy", price: 4500, discount: 25, material: "Wool", availability: "In Stock", category: "Winter" },
-  { id: "10", name: "Denim Jacket", rating: 4.4, type: "Jacket", color: "Blue", size: "S", brand: "Texmart", price: 2800, discount: 15, material: "Denim", availability: "In Stock", category: "Summer" },
-  
-  // Sportswear
-  { id: "11", name: "Yoga Leggings", rating: 4.3, type: "Pants", color: "Black", size: "M", brand: "Le Reve", price: 1200, discount: 10, material: "Polyester", availability: "In Stock", category: "Sportswear" },
-  { id: "12", name: "Sports Hoodie", rating: 4.1, type: "Hoodie", color: "Gray", size: "L", brand: "Richman", price: 1500, discount: 15, material: "Cotton", availability: "In Stock", category: "Sportswear" },
-  
-  // Special Occasion
-  { id: "13", name: "Designer Lehenga", rating: 4.8, type: "Lehenga", color: "Gold", size: "M", brand: "Kay Kraft", price: 8500, discount: 35, material: "Silk", availability: "Pre-Order", category: "Party" },
-  
-  // Basics
-  { id: "14", name: "Cotton T-Shirt", rating: 4.0, type: "T-Shirt", color: "White", size: "L", brand: "Aarong", price: 550, discount: 5, material: "Cotton", availability: "In Stock", category: "Summer" },
-  { id: "15", name: "Linen Shorts", rating: 4.2, type: "Shorts", color: "Green", size: "S", brand: "Yellow", price: 800, discount: 10, material: "Linen", availability: "Out of Stock", category: "Summer" }
-];
   return (
-    <main className={styles.mainContent}>
-      <ScrollSection title="Popular Men's Wear" cards={[...Men, ...Men]} />
-      <ScrollSection title="Popular Women's Wear" cards={[...Women, ...Women]} />
-      <ScrollSection title="Best selling products" cards={[...Men, ...Men]} />
-      <ScrollSection title="Top rated products" cards={[...Women, ...Women]} />
+    <>
+    <Outlet/>
+    {
+      location1 && (
+        <main className={styles.mainContent}>
+      {
+        top.length > 0 && (
+          <ScrollSection title="Top Rated Products" cards={[...top]} />
+        )
+      }
+      {
+        men.length > 0 && (
+          <ScrollSection title="Popular Men's Wear" cards={[...men]} />
+        )
+      }
+      
+      {
+        women.length > 0 && (
+          <ScrollSection title="Popular Women's Wear" cards={[...women]} />
+        )
+      }
+      {
+        kid.length > 0 && (
+          <ScrollSection title="Popular Kids' Wear" cards={[...kid]} />
+        )
+      }
+
+      {
+        unisex.length > 0 && (
+          <ScrollSection title="Popular Unisex Wear" cards={[...unisex]} />
+        )
+      }
+      
     </main>
+      )
+    } 
+    </>
   );
 };
 

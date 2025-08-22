@@ -10,6 +10,7 @@ import {
   FiDollarSign,
 } from "react-icons/fi";
 import { FaRegCheckCircle } from "react-icons/fa";
+import { MdKeyboardArrowDown } from "react-icons/md";
 import {
   BsCheckCircle,
   BsTruck,
@@ -162,7 +163,11 @@ const AdminOrdersPage = () => {
           )}`;
         } else if (newStatus === "ready") {
           updatedOrder.readyDate = new Date();
-        } else if (newStatus === "picked") {
+        } 
+        else if (newStatus === "processing") {
+          updatedOrder.processedDate = new Date();
+        } 
+        else if (newStatus === "picked") {
           updatedOrder.pickedDate = new Date();
         } else if (newStatus === "delivered") {
           updatedOrder.deliveredDate = new Date();
@@ -188,6 +193,37 @@ const AdminOrdersPage = () => {
     setSelectedOrder(updatedOrders.find((order) => order.id === orderId));
     showNotification(`Order ${orderId} status updated to ${newStatus}`);
     setShowActionMenu(null);
+  };
+
+  const updatePaymentStatus = (orderId, newPaymentStatus) => {
+    const updatedOrders = orders.map((order) => {
+      if (order.id === orderId) {
+        const originalState = order.originalState || {
+          status: order.status,
+          payment: order.payment,
+          paymentMethod: order.paymentMethod,
+          processedDate: order.processedDate,
+          readyDate: order.readyDate,
+          shippedDate: order.shippedDate,
+          pickedDate: order.pickedDate,
+          deliveredDate: order.deliveredDate,
+          cancelledDate: order.cancelledDate,
+          tracking: order.tracking,
+          refundAmount: order.refundAmount,
+        };
+
+        return {
+          ...order,
+          originalState,
+          payment: newPaymentStatus,
+        };
+      }
+      return order;
+    });
+
+    setOrders(updatedOrders);
+    setSelectedOrder(updatedOrders.find((order) => order.id === orderId));
+    showNotification(`Order ${orderId} payment status updated to ${newPaymentStatus}`);
   };
 
   const revertToOriginalState = (orderId) => {
@@ -269,9 +305,39 @@ const AdminOrdersPage = () => {
     setCurrentPage(1);
   };
 
-  const handlePrintInvoice = () => {
-    showNotification("Invoice sent to printer", "info");
-    setShowActionMenu(null);
+  const handleStatusUpdateToBackend = async() => {
+    const updatedOrder={
+      serialId: selectedOrder.serialId,
+      status: selectedOrder.status,
+      payment: selectedOrder.payment,
+      processedDate: selectedOrder.processedDate,
+      readyDate: selectedOrder.readyDate,
+      shippedDate: selectedOrder.shippedDate,
+      pickedDate: selectedOrder.pickedDate,
+      deliveredDate: selectedOrder.deliveredDate,
+      cancelledDate: selectedOrder.cancelledDate,
+    };
+
+  try {
+  const response =await fetch('http://localhost:8080/update-order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedOrder),
+    credentials: "include",
+  })
+    if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error);
+        }
+
+        const data = await response.text();
+        showNotification(data, "success");
+      } catch (error) {
+        showNotification(error.message, "error");
+        console.error("Error fetching cart items:", error);
+      }
   };
 
   const handleEmailCustomer = () => {
@@ -784,7 +850,7 @@ const AdminOrdersPage = () => {
                                   {formatDateTime(new Date(selectedOrder.readyDate))}
                                 </p>
                                 <p className={styles.tracking}>
-                                  Store: <span>{selectedOrder.pickupLocation}</span>
+                                  Store: <span>Mirpur-10, Dhaka</span>
                                 </p>
                               </>
                             ) : (
@@ -823,7 +889,7 @@ const AdminOrdersPage = () => {
                 selectedOrder.status === "ready" && (
                   <div className={styles.notificationBanner}>
                     <BsBellFill /> Order is ready for pickup at{" "}
-                    {selectedOrder.pickupLocation || "Store"}
+                    {selectedOrder.pickupLocation || "Mirpur-10, Dhaka"}
                   </div>
                 )}
 
@@ -897,13 +963,21 @@ const AdminOrdersPage = () => {
                       <span className={styles.detailLabel}>
                         Payment Status:
                       </span>
-                      <span
-                        className={`${styles.detailValue} ${
-                          styles[selectedOrder.payment]
-                        }`}
-                      >
-                        {selectedOrder.payment === "Paid" ? "Paid" : "Pending"}
-                      </span>
+                      <div className={styles.statusSelectContainer1}>
+                        <select
+                          className={styles.statusSelect1}
+                          value={selectedOrder.payment}
+                          onChange={(e) =>
+                            updatePaymentStatus(selectedOrder.id, e.target.value)
+                          }
+                        >
+                          <option value="Paid">Paid</option>
+                          <option value="Pending">Pending</option>
+                        </select>
+                        <div className={styles.selectArrow1}>
+                          <MdKeyboardArrowDown />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -917,7 +991,7 @@ const AdminOrdersPage = () => {
                       <div className={styles.detailRow}>
                         <span className={styles.detailLabel}>Store:</span>
                         <span className={styles.detailValue}>
-                          {selectedOrder.pickupLocation || "Store"}
+                          {selectedOrder.pickupLocation || "Mirpur-10, Dhaka"}
                         </span>
                       </div>
                       <div className={styles.detailRow}>
@@ -929,7 +1003,7 @@ const AdminOrdersPage = () => {
                       <div className={styles.detailRow}>
                         <span className={styles.detailLabel}>Contact:</span>
                         <span className={styles.detailValue}>
-                          {selectedOrder.storeContact || "Store Phone Number"}
+                          {selectedOrder.storeContact || "01740-123456"}
                         </span>
                       </div>
                     </div>
@@ -984,6 +1058,15 @@ const AdminOrdersPage = () => {
                         ৳{selectedOrder.deliveryMethod === "home" ? "50" : "0"}
                       </span>
                     </div>
+                    
+                    <div className={styles.summaryTotal}>
+                      <span>Total:</span>
+                      <span>
+                        ৳
+                        {selectedOrder.total +
+                          (selectedOrder.deliveryMethod === "home" ? 50 : 0)}
+                      </span>
+                    </div>
                     {selectedOrder.status === "cancelled" &&
                       selectedOrder.payment === "Paid" && (
                         <div className={styles.summaryRow}>
@@ -996,14 +1079,6 @@ const AdminOrdersPage = () => {
                           </span>
                         </div>
                       )}
-                    <div className={styles.summaryTotal}>
-                      <span>Total:</span>
-                      <span>
-                        ৳
-                        {selectedOrder.total +
-                          (selectedOrder.deliveryMethod === "home" ? 50 : 0)}
-                      </span>
-                    </div>
                   </div>
                 </div>
 
@@ -1018,26 +1093,20 @@ const AdminOrdersPage = () => {
                           updateOrderStatus(selectedOrder.id, e.target.value)
                         }
                       >
-                        {selectedOrder.status === "cancelled" ? (
-                          <option value="cancelled">Cancelled</option>
+                        <option value="Order Placed">New Order</option>
+                        <option value="processing">Processing</option>
+                        {selectedOrder.deliveryMethod === "home" ? (
+                          <>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                          </>
                         ) : (
                           <>
-                            <option value="Order Placed">New Order</option>
-                            <option value="processing">Processing</option>
-                            {selectedOrder.deliveryMethod === "home" ? (
-                              <>
-                                <option value="shipped">Shipped</option>
-                                <option value="delivered">Delivered</option>
-                              </>
-                            ) : (
-                              <>
-                                <option value="ready">Ready for Pickup</option>
-                                <option value="picked">Picked Up</option>
-                              </>
-                            )}
-                            <option value="cancelled">Cancel Order</option>
+                            <option value="ready">Ready for Pickup</option>
+                            <option value="picked">Picked Up</option>
                           </>
                         )}
+                        <option value="cancelled">Cancel Order</option>
                       </select>
                       <div className={styles.selectArrow}>
                         <FiChevronRight />
@@ -1047,9 +1116,9 @@ const AdminOrdersPage = () => {
                     <div className={styles.actionButtonGroup}>
                       <button
                         className={styles.actionButton}
-                        onClick={handlePrintInvoice}
+                        onClick={handleStatusUpdateToBackend}
                       >
-                        <FiPrinter /> Print
+                        <FiPrinter /> Confirm Update
                       </button>
                       <button
                         className={styles.actionButton}

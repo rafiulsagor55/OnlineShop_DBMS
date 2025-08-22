@@ -1,10 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import styles from "./ScrollSection.module.css";
-import sagorImage from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (12).png";
+// import sagorImage from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (12).png";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
 // import sagorImage1 from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/sagor1.jpg";
 const ScrollSection = ({ title, cards }) => {
+  console.log("card "+cards);
   const rowRef = useRef(null);
   const leftArrowRef = useRef(null);
   const rightArrowRef = useRef(null);
@@ -59,8 +60,10 @@ const ScrollSection = ({ title, cards }) => {
             >
               <div className={styles.customCard} key={idx}>
                 <div className={styles.cardImageContainer}>
-                  <img src={sagorImage} alt="Card Image" />
-                  <div className={styles.cardRating}>★ 4.5</div>
+                  <img src={card.imageData} alt="Card Image" />
+                  <div className={styles.cardRating}>
+                    {card.rating != null && card.rating !== 0 ? card.rating : "NEW"}
+                  </div>
                 </div>
                 <div className={styles.cardContent}>
                   <h3 className={styles.cardTitle} title={card.name}>{card.name}</h3>

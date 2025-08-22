@@ -359,7 +359,9 @@ const TypeBasedItemUnisex = () => {
                       src={`${card.imageData}`} 
                       alt="Product" 
                     />
-                    <div className={styles.cardRating}>★ {card.rating}</div>
+                    <div className={styles.cardRating}>
+                      {card.rating != null && card.rating !== 0 ? `★ ${card.rating}` : "NEW"}
+                    </div>
                   </div>
                   <div className={styles.cardContent}>
                     <h3 className={styles.cardTitle} title={card.name}>{card.name}</h3>

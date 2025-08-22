@@ -108,7 +108,7 @@ const AdminTypeBasedItem = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/products/get-all-mens-products");
+      const response = await fetch("http://localhost:8080/api/products/get-all-mens-products-admin");
       const data = await response.json();
       setProducts(data);
       setLoading(false);
