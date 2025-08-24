@@ -63,7 +63,7 @@ const AdminOrdersPage = () => {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/get-all-order-item",
+          "http://localhost:8080/get-all-order-item-admin",
           {
             method: "GET",
             headers: {

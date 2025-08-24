@@ -729,7 +729,7 @@ body {
   color: white;
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1001;
+  z-index: 999999999999999;
   animation: slideIn 0.3s ease-out;
   display: flex;
   align-items: center;
@@ -764,7 +764,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999999999;
   padding: 20px;
   backdrop-filter: blur(5px);
 }
@@ -1331,13 +1331,14 @@ body {
   .modalOverlay {
     padding: 15px;
     padding-top: 20px;
+    z-index: 9999999999999;
   }
 
   .orderDetailModal {
     width: 90%;
     height: 95%;
     border-radius: 8px;
-    z-index: 99999;
+    z-index: 9999999999999;
   }
 
   .modalHeader {

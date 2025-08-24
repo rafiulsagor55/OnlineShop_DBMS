@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, useLocation,useNavigate } from 'react-router-dom';
 import styles from './Layout.module.css';
 import { 
   FaHome, FaBox, FaFileInvoiceDollar, FaUsers, 
@@ -8,12 +8,16 @@ import {
 } from 'react-icons/fa';
 import { ImManWoman } from "react-icons/im";
 import { IoBagAddSharp } from "react-icons/io5";
+import ProfileDropdown from '../Profile/ ProfileDropdown';
+import ProfileDropdownAdmin from '../Profile/ProfileDropdownAdmin';
 
 const Layout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({});
   const sidebarRef = useRef(null);
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Handle click outside to close sidebar on mobile
   useEffect(() => {
@@ -44,6 +48,27 @@ const Layout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+
+  useEffect(() => {
+    const checkValidity = async () => {
+          try {
+            const response = await fetch("http://localhost:8080/admin-validity", {
+              credentials: "include",
+            });
+    
+            if (!response.ok) {
+              navigate("/admin-sign-in");
+              return;
+            }                
+          } catch (error) {
+            console.error("Failed to fetch user data:", error);
+            
+          }
+        };
+    
+        checkValidity();
+  }, []);
+
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -57,6 +82,20 @@ const Layout = () => {
 
   const handleNavClick = () => {
     if (window.innerWidth <= 768) setIsSidebarCollapsed(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/admin-logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        navigate("/admin-sign-in");
+      }      
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const navItems = [
@@ -221,15 +260,7 @@ const Layout = () => {
 
         <div className={styles.sidebarFooter}>
           <div className={styles.userProfile}>
-            <div className={styles.avatar}>
-              <FaUser />
-            </div>
-            {!isSidebarCollapsed && (
-              <div className={styles.userInfo}>
-                <span className={styles.userName}>Admin User</span>
-                <span className={styles.userRole}>Administrator</span>
-              </div>
-            )}
+            <ProfileDropdownAdmin onLogout={handleLogout} isOpen={isOpen} setIsOpen={setIsOpen} setIsSidebarCollapsed={setIsSidebarCollapsed} isSidebarCollapsed={isSidebarCollapsed}/>
           </div>
         </div>
       </aside>

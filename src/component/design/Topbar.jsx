@@ -84,7 +84,7 @@ const Topbar = ({ toggleSidebar, isSidebarOpen }) => {
 
       {isTokenValid ? (
         <div className={styles.topbarButtons}>
-          <Link to="/cartPage">
+          <Link to="/notifications">
             <button className={getButtonClass("/cartPage")}>
               <div className={styles.cartContainer}>
                 <IoIosNotifications className={styles.cartIcon} />
@@ -98,9 +98,9 @@ const Topbar = ({ toggleSidebar, isSidebarOpen }) => {
             <button className={getButtonClass("/cartPage")}>
               <div className={styles.cartContainer}>
                 <FaCartArrowDown className={styles.cartIcon} />
-                {cartItemCount > 0 && (
+                {/* {cartItemCount > 0 && (
                   <span className={styles.cartBadge}>{cartItemCount}</span>
-                )}
+                )} */}
               </div>
             </button>
           </Link>

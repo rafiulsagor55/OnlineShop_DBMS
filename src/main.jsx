@@ -44,6 +44,9 @@ import AdminTypeBasedItemWomen from "./component/design/AdminTypeBasedItemWomen.
 import AdminTypeBasedItemKids from "./component/design/AdminTypeBasedItemKids.jsx";
 import AdminTypeBasedItemUnisex from "./component/design/AdminTypeBasedItemUnisex.jsx";
 import TypeBasedItemUnisex from "./component/design/TypeBasedItemUnisex.jsx";
+import AdminSignin from "./component/Auth/AdminSignin.jsx";
+import ProfileDropdown from "./component/Profile/ ProfileDropdown.jsx";
+import ProfileDropdownAdmin from "./component/Profile/ProfileDropdownAdmin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -121,6 +124,10 @@ const router = createBrowserRouter([
   {
     path: "/sign-in",
     element: <Signin />,
+  },
+  {
+    path: "/admin-sign-in",
+    element: <AdminSignin />,
   },
   {
     path: "/sign-up",
@@ -251,6 +258,10 @@ const router = createBrowserRouter([
       {
         path: "add-product",
         element: <ProductInputPage/>,
+      },
+      {
+        path: "admin-profile",
+        element: <ProfileDropdownAdmin/>,
       },
     ],
   },
