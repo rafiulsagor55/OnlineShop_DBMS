@@ -36,6 +36,7 @@ body {
   padding: 10px;
   max-width: 1600px;
   margin: 0 auto;
+  overflow: visible; /* Prevent clipping of fixed elements like notification */
 }
 
 /* Sticky Header Styles */
@@ -506,7 +507,7 @@ body {
 
 .statusBadge.shipped {
   background-color: #E1F0FF;
-  color: #0062FF;
+  color: none;
 }
 
 .statusBadge.delivered {
@@ -729,11 +730,13 @@ body {
   color: white;
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 999999999999999;
+  z-index: 1000000000; /* High z-index to appear above modal */
   animation: slideIn 0.3s ease-out;
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 200px;
+  max-width: 90%; /* Prevent overflow on small screens */
 }
 
 .notification.success {
@@ -765,8 +768,9 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 999999999;
-  padding: 20px;
+  padding: 20px; /* Ensure padding for mobile */
   backdrop-filter: blur(5px);
+  overflow: visible; /* Prevent clipping of fixed elements */
 }
 
 .orderDetailModal {
@@ -907,7 +911,7 @@ body {
 .timelineStep.incompleted .stepIcon {
   background-color: red;
   color: white;
-  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+  box-shadow: none;
 }
 
 @keyframes pulse {
@@ -1043,8 +1047,6 @@ body {
   pointer-events: none;
   color: var(--gray);
 }
-
-
 
 .detailValue.paid {
   color: var(--success);
@@ -1330,15 +1332,15 @@ body {
 
   .modalOverlay {
     padding: 15px;
-    padding-top: 20px;
-    z-index: 9999999999999;
+    overflow: visible; /* Prevent clipping */
+    z-index: 999999999;
   }
 
   .orderDetailModal {
     width: 90%;
     height: 95%;
     border-radius: 8px;
-    z-index: 9999999999999;
+    z-index: 999;
   }
 
   .modalHeader {
@@ -1429,9 +1431,18 @@ body {
   }
 }
 
+@media (max-width: 980px){
+  .header{
+    top: 38px;
+  }
+}
+
 @media (max-width: 636px) {
   .quickStatsTabs {
     top: 100px;
+  }
+  .header{
+    top: -10px;
   }
 
   .summaryCards {
@@ -1453,15 +1464,26 @@ body {
   }
 
   .modalOverlay {
-    padding: 0;
-    /* padding-top: 15px; */
+    padding: 10px; /* Add padding for mobile */
+    overflow: visible; /* Prevent clipping */
+    z-index: 999999999;
   }
 
   .orderDetailModal {
     width: 100%;
     height: 100%;
-    border-radius: 4px;
+    border-radius: 0; /* Full-screen modal */
     margin: 0 !important;
+    overflow-y: auto;
+  }
+
+  .notification {
+    top: 10px; /* Adjusted for mobile */
+    right: 10px;
+    max-width: 80%; /* Ensure it fits on small screens */
+    font-size: 12px; /* Slightly smaller for mobile */
+    padding: 10px 15px;
+    z-index: 1000000000; /* Ensure above modal */
   }
 
   .modalHeader {

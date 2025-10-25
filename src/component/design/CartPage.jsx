@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { FaCartArrowDown } from "react-icons/fa";
 import Notification from "./Notification";
+import ConfirmModal from "./ConfirmModal";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [notificationType, setNotificationType] = useState("info");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState(null);
 
   const showNotif = (message, type = "info") => {
     setNotificationMessage(message);
@@ -70,16 +73,17 @@ const CartPage = () => {
     fetchCartItems();
   }, []);
 
-  const handleRemove = async (id) => {
-    if (
-      window.confirm(
-        "Are you sure you want to remove this item from your cart?"
-      )
-    ) {
-      setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const handleRemove = (id) => {
+    setItemToRemove(id);
+    setShowConfirmModal(true);
+  };
+
+  const confirmRemove = async () => {
+    if (itemToRemove) {
+      setCartItems((prev) => prev.filter((item) => item.id !== itemToRemove));
       try {
         const response = await fetch(
-          `http://localhost:8080/remove-cart-item/${id}`,
+          `http://localhost:8080/remove-cart-item/${itemToRemove}`,
           {
             method: "DELETE",
             headers: {
@@ -100,6 +104,13 @@ const CartPage = () => {
         console.error("Error removing item from cart:", error);
       }
     }
+    setShowConfirmModal(false);
+    setItemToRemove(null);
+  };
+
+  const cancelRemove = () => {
+    setShowConfirmModal(false);
+    setItemToRemove(null);
   };
 
   const handleSelect = (id) => {
@@ -291,6 +302,15 @@ const CartPage = () => {
           </div>
         </div>
       )}
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onConfirm={confirmRemove}
+        onCancel={cancelRemove}
+        title="Confirm Removal"
+        message="Are you sure you want to remove this item from your cart?"
+        confirmText="Remove"
+        cancelText="Cancel"
+      />
     </div>
   );
 };

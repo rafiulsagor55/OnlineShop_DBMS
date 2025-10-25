@@ -537,7 +537,8 @@ const CurrentOrderPage = () => {
                               )}
                             </p>
                             <p className={styles.tracking}>
-                              Store: <span>{selectedOrder.pickupLocation}</span>
+                              {/* Store: <span>{selectedOrder.pickupLocation}</span> */}
+                              Store: <span>Mirpur-10, Dhaka</span>
                             </p>
                           </>
                         ) : (

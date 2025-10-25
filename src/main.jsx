@@ -47,6 +47,8 @@ import TypeBasedItemUnisex from "./component/design/TypeBasedItemUnisex.jsx";
 import AdminSignin from "./component/Auth/AdminSignin.jsx";
 import ProfileDropdown from "./component/Profile/ ProfileDropdown.jsx";
 import ProfileDropdownAdmin from "./component/Profile/ProfileDropdownAdmin.jsx";
+import NotificationPage from "./component/design/NotificationPage.jsx";
+import AdminActivityLog from "./component/design/AdminActivityLog.jsx";
 
 const router = createBrowserRouter([
   {
@@ -60,7 +62,6 @@ const router = createBrowserRouter([
       {
         path: "home/:id",
         element: <ProductPage />,
-
       },
       {
         path: "Mens-Wear",
@@ -106,10 +107,14 @@ const router = createBrowserRouter([
         path: "product/:id",
         element: <ProductPage />,
       },
-      
+
       {
         path: "/cartPage",
         element: <CartPage />,
+      },
+      {
+        path: "/notificationPage",
+        element: <NotificationPage />,
       },
       {
         path: "/CheckoutPage",
@@ -165,6 +170,7 @@ const router = createBrowserRouter([
     path: "/order-page-admin",
     element: <AdminOrdersPage />,
   },
+
   {
     path: "/chatbox",
     element: <ChatApp />,
@@ -250,18 +256,26 @@ const router = createBrowserRouter([
         path: "filter-unisex-wear",
         element: <AdminFilterInput />,
       },
-      
+
       {
         path: "orders",
         element: <AdminOrdersPage />,
       },
       {
+        path: "admin-activity-log",
+        element: <AdminActivityLog />,
+      },
+      {
         path: "add-product",
-        element: <ProductInputPage/>,
+        element: <ProductInputPage />,
+      },
+      {
+        path: "chatbox",
+        element: <ChatApp />,
       },
       {
         path: "admin-profile",
-        element: <ProfileDropdownAdmin/>,
+        element: <ProfileDropdownAdmin />,
       },
     ],
   },

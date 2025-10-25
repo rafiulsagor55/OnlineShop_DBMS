@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navigate, NavLink, Outlet, useLocation,useNavigate } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Layout.module.css';
 import { 
   FaHome, FaBox, FaFileInvoiceDollar, FaUsers, 
   FaChartLine, FaBars, FaTimes, FaUser, 
-  FaChevronDown, FaChevronRight, FaMale, FaFemale, FaChild, FaFilter
+  FaChevronDown, FaChevronRight, FaMale, FaFemale, FaChild, FaFilter, FaHistory
 } from 'react-icons/fa';
+import { BiSolidShoppingBags } from "react-icons/bi";
+import { BsChatDotsFill } from "react-icons/bs";
+import { RiHistoryFill } from "react-icons/ri";
+import { FiActivity } from "react-icons/fi";
 import { ImManWoman } from "react-icons/im";
 import { IoBagAddSharp } from "react-icons/io5";
 import ProfileDropdown from '../Profile/ ProfileDropdown';
@@ -48,25 +52,23 @@ const Layout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
   useEffect(() => {
     const checkValidity = async () => {
-          try {
-            const response = await fetch("http://localhost:8080/admin-validity", {
-              credentials: "include",
-            });
-    
-            if (!response.ok) {
-              navigate("/admin-sign-in");
-              return;
-            }                
-          } catch (error) {
-            console.error("Failed to fetch user data:", error);
-            
-          }
-        };
-    
-        checkValidity();
+      try {
+        const response = await fetch("http://localhost:8080/admin-validity", {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          navigate("/admin-sign-in");
+          return;
+        }                
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    checkValidity();
   }, []);
 
   const toggleSidebar = () => {
@@ -126,25 +128,30 @@ const Layout = () => {
       link: 'orders',
     },
     {
-      icon: FaUsers,
-      text: 'Customers',
-      link: 'customers',
-      children: [
-        { text: 'Customer List', link: 'customer-list' },
-        { text: 'Segments', link: 'segments' }
-      ]
+      icon: BsChatDotsFill,
+      text: 'Chat Box',
+      link: 'chatbox',
     },
+    // {
+    //   icon: FaUsers,
+    //   text: 'Customers',
+    //   link: 'customers',
+    //   children: [
+    //     { text: 'Customer List', link: 'customer-list' },
+    //     { text: 'Segments', link: 'segments' }
+    //   ]
+    // },
     {
-      icon: FaChartLine,
-      text: 'Analytics',
-      link: 'analytics'
+      icon: FaHistory,
+      text: 'Admin Activity Log',
+      link: 'admin-activity-log',
     },
     {
       icon: FaFilter,
       text: 'Add Filter Option',
       link: 'add-filter-option',
       children: [
-        { text: "Men's Wear", link: 'filter-mens-wear', icon: FaMale ,state: "Male"},
+        { text: "Men's Wear", link: 'filter-mens-wear', icon: FaMale, state: "Male" },
         { text: "Women's Wear", link: 'filter-womens-wear', icon: FaFemale, state: "Female" },
         { text: "Kid's Wear", link: 'filter-kids-wear', icon: FaChild, state: "Kids" },
         { text: "Unisex", link: 'filter-unisex-wear', icon: ImManWoman, state: "Unisex" },
@@ -173,7 +180,8 @@ const Layout = () => {
         <div className={styles.sidebarHeader}>
           <div className={styles.logo}>
             <div className={styles.logoIcon}>
-              <FaBox />
+              {/* <BiSolidShoppingBags /> */}
+              🛍️
             </div>
             {!isSidebarCollapsed && (
               <span className={styles.logoText}>Online Shop</span>
@@ -267,12 +275,19 @@ const Layout = () => {
 
       <main className={styles.mainContent}>
         {isSidebarCollapsed && window.innerWidth <= 768 && (
-          <button 
-            className={styles.mobileToggle} 
-            onClick={toggleSidebar}
-          >
-            <FaBars />
-          </button>
+          <div className={styles.topbar}>
+            <button 
+              className={styles.topbarToggle} 
+              onClick={toggleSidebar}
+              aria-label="Toggle sidebar"
+            >
+              <FaBars />
+            </button>
+            <div className={styles.topbarLogo}>
+              {/* <FaBox className={styles.topbarLogoIcon} /> */}
+              <span className={styles.topbarLogoText}>Online Shop</span>
+            </div>
+          </div>
         )}
         
         <div className={styles.contentWrapper}>

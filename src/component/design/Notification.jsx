@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './Notification.module.css';
+import { IoIosNotifications } from "react-icons/io";
 
 const Notification = ({ message, type = 'info', onClose }) => {
   useEffect(() => {
@@ -18,6 +19,8 @@ const Notification = ({ message, type = 'info', onClose }) => {
         return '✕';
       case 'warning':
         return '⚠';
+        case 'notification':
+        return <IoIosNotifications style={{ color: "#0c7c75ff" }} />;
       default:
         return 'ℹ';
     }

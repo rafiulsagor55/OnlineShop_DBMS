@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,useContext } from "react";
 import styles from "./ProductPage.module.css";
 import { Link, Outlet } from "react-router";
 import { useParams, useLocation } from "react-router-dom";
@@ -8,6 +8,7 @@ import QASection from "./QASection";
 import ReviewSection from "./ReviewSection";
 import RelatedProductPage from "./RelatedProductPage";
 import Notification from "./Notification";
+import { UserContext } from "../UserContext";
 
 const ProductPage = () => {
   const location = useLocation();
@@ -15,6 +16,7 @@ const ProductPage = () => {
   const Id = location.state?.id; // Get id from location.state
   const mainID = Id || idLink; // Use location.state.id if available, else fall back to param.id
   console.log("mainID:", mainID); // Debug: Log the resolved mainID
+  const { setCartItemCount} = useContext(UserContext);
 
   const pageRef = useRef();
   const [product, setProduct] = useState(null);
@@ -131,6 +133,7 @@ const ProductPage = () => {
         const result = await response.text();
         console.log("Product added to cart successfully:", result);
         showNotif(result, "success");
+        setCartItemCount(prevCount => prevCount + 1); // Increment cart item count
       } else {
         const errorData = await response.text();
         throw new Error(errorData || "Something went wrong");

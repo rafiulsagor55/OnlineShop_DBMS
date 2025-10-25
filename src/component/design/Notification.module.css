@@ -27,6 +27,11 @@
   border-left: 4px solid #52c41a;
   color: #52c41a;
 }
+.notification.notification {
+  background-color: #f6ffed;
+  border-left: 4px solid #0f8884;
+  color: #096453;
+}
 
 .notification.warning {
   background-color: #fffbe6;
