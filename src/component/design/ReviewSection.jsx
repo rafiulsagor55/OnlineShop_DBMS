@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./ReviewSection.module.css";
-import staticUserImage from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (2).png";
+import staticUserImage from "../../assets/Avatar.png";
 import { BiSolidLike, BiSolidDislike } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdEdit } from "react-icons/md";

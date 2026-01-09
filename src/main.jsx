@@ -49,6 +49,7 @@ import ProfileDropdown from "./component/Profile/ ProfileDropdown.jsx";
 import ProfileDropdownAdmin from "./component/Profile/ProfileDropdownAdmin.jsx";
 import NotificationPage from "./component/design/NotificationPage.jsx";
 import AdminActivityLog from "./component/design/AdminActivityLog.jsx";
+import Callback from "./component/Callback.jsx";
 
 const router = createBrowserRouter([
   {
@@ -139,6 +140,10 @@ const router = createBrowserRouter([
     element: <Signup />,
   },
   {
+    path: "/callback",
+    element: <Callback />,
+  },
+  {
     path: "/verify-email",
     element: <VerifyEmail />,
   },
@@ -174,6 +179,10 @@ const router = createBrowserRouter([
   {
     path: "/chatbox",
     element: <ChatApp />,
+  },
+  {
+    path: "/demo",
+    element: <Demo2 />,
   },
   {
     path: "/filter-option",

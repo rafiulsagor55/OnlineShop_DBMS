@@ -1,158 +1,130 @@
-import React, { useRef } from "react";
-import { jsPDF } from "jspdf";
-import "./demo.css";
+import React, { useState } from 'react';
 
-const Demo2 = () => {
-  const contentRef = useRef();
+function Demo2() {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});  // Field-wise errors store করার জন্য
 
-  const exportPDF = () => {
-    const content = contentRef.current;
-    const contentWidth = content.offsetWidth;
-    const pdfWidth = 595.28; // A4 width in points (210mm)
-    const scale = (pdfWidth - 80) / contentWidth;
-  
-    const doc = new jsPDF({
-      unit: "pt",
-      format: "a4",
-      orientation: "portrait",
+  // Input change handler: Value update + error clear
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
     });
-  
-    doc.html(content, {
-      callback: function (doc) {
-        const pageCount = doc.internal.getNumberOfPages();
+    // Type করলে corresponding error clear করুন (UX improvement)
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ''
+      });
+    }
+  };
+
+  // Submit handler: Fetch API use করে POST + field-wise error handling
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});  // Previous errors clear করুন
+
+    try {
+      const response = await fetch('http://localhost:8080/api/public/demo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {  // 400 Bad Request check
+        const errorData = await response.json();  // Backend-এর errors parse করুন
+        setErrors(errorData.errors || {});  // Field-wise errors set করুন
         
-        // Add page numbers to each page
-        for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          
-          // // Center the content vertically (your existing code)
-          const pageHeight = doc.internal.pageSize.height;
-          // const contentHeight = doc.internal.getCurrentPageInfo().pageContext.pageHeight;
-          // const yOffset = (pageHeight - contentHeight) / 2;
-          // if (yOffset > 0) {
-          //   doc.internal.pageSize.y = yOffset;
-          // }
-          
-          // Add page number at the bottom center
-          const pageSize = doc.internal.pageSize;
-          const pageWidth = pageSize.width;
-          doc.setFontSize(10);
-          doc.setTextColor(100);
-          doc.text(
-            `Page ${i} of ${pageCount}`,
-            pageWidth / 2,
-            pageHeight - 20,
-            { align: 'center' }
-          );
-        }
+        // Console-এ log (debug-এর জন্য)
+        console.log('Field-wise Errors:', errorData);
         
-        doc.save("exported-document.pdf");
-      },
-      margin: [40, 0, 40, 0],
-      autoPaging: "text",
-      html2canvas: {
-        scale: scale,
-        useCORS: true,
-        letterRendering: true,
-        width: contentWidth,
-      },
-      width: pdfWidth,
-      windowWidth: contentWidth,
-      x: (pdfWidth - contentWidth * scale) / 2,
-      y: 0,
-    });
+        // Optional: Global alert
+        alert(errorData.message || 'Please fix the errors below');
+        return;
+      }
+
+      // Success: 200 OK
+      const successData = await response.text();  // Response body (string)
+      alert(successData);  // "User registered successfully!"
+      setFormData({ username: '', email: '', password: '' });  // Form reset
+    } catch (error) {
+      console.error('Network error:', error);
+      alert('Server error: ' + (error.message || 'Something went wrong'));
+    }
   };
 
   return (
-    <div style={{ padding: "20px" ,overflow:"auto",}}>
-      <h2>Export HTML to PDF (Selectable Text)</h2>
-      <button onClick={exportPDF} style={{ marginBottom: "20px" }}>
-        Download PDF
-      </button>
+    <div className="App">
+      <h2>User Registration Form</h2>
+      <form onSubmit={handleSubmit}>
+        {/* Username Field */}
+        <div className="form-group">
+          <label htmlFor="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Enter username (letters, numbers, underscores only)"
+          />
+          {/* Field-wise Error Show: যদি errors.username থাকে, red span show করুন */}
+          {errors.username && (
+            <span id="usernameError" className="error-message">
+              {errors.username}
+            </span>
+          )}
+        </div>
 
-      <div
-        ref={contentRef}
-        style={{
-          padding: "20px",
-          backgroundColor: "#f9f9f9",
-          color: "#333",
-          fontFamily: "Arial",
-          width: "100%",
-          maxWidth: "700px", // This will be the reference width
-          boxSizing: "border-box",
-          overflow:"auto",
-        }}
-      >
-        <h1 style={{ color: "#4A90E2", fontSize: "24px", marginTop: 0 }}>
-          Sample PDF Content
-        </h1>
-        <p style={{ fontSize: "12px", lineHeight: "1.5" }}>
-          This is some text content that will be searchable, selectable, and
-          copyable in the PDF.
-        </p>
-        <p
-          style={{ marginTop: "20px", marginBottom: "10px", fontSize: "12px" }}
-        >
-          Here's an image:
-        </p>
-        <img
-          src="https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt="Placeholder"
-          style={{
-            maxWidth: "100%",
-            height: "auto",
-            marginBottom: "30px",
-          }}
-        />
-        <img
-          src="https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt="Placeholder"
-          style={{
-            maxWidth: "100%",
-            height: "auto",
-            marginBottom: "30px",
-          }}
-        />
-        <table
-          border="1"
-          cellPadding="10"
-          style={{
-            borderCollapse: "collapse",
-            width: "100%",
-            fontSize: "10px",
-            marginBottom: "20px",
-          }}
-        >
-          <thead>
-            <tr style={{ backgroundColor: "#eee" }}>
-              <th>Name</th>
-              <th>Age</th>
-              <th>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Jane Doe</td>
-              <td>28</td>
-              <td>Engineer</td>
-            </tr>
-            <tr>
-              <td>John Smith</td>
-              <td>35</td>
-              <td>Designer</td>
-            </tr>
-          </tbody>
-        </table>
-        <p style={{ fontSize: "12px", lineHeight: "1.5" }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos
-          exercitationem voluptates odit pariatur voluptatum minus aspernatur
-          ipsum, distinctio quibusdam velit hic est esse at dolores corrupti,
-          recusandae obcaecati unde omnis.Lorem ipsum dolor sit amet consectetur
-          adipisicing elit.
-        </p>
-      </div>
+        {/* Email Field */}
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter valid email"
+          />
+          {/* Field-wise Error Show */}
+          {errors.email && (
+            <span id="emailError" className="error-message">
+              {errors.email}
+            </span>
+          )}
+        </div>
+
+        {/* Password Field */}
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter password (min 8 characters)"
+          />
+          {/* Field-wise Error Show */}
+          {errors.password && (
+            <span id="passwordError" className="error-message">
+              {errors.password}
+            </span>
+          )}
+        </div>
+
+        <button type="submit">Register</button>
+      </form>
     </div>
   );
-};
+}
 
 export default Demo2;

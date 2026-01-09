@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./QASection.module.css";
-import userAvatar from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (2).png";
-import supportAvatar from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (4).png";
+import userAvatar from "../../assets/Avatar.png";
+import supportAvatar from "../../assets/Avatar.png";
 import { BiSolidLike } from "react-icons/bi";
 import { BiSolidDislike } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";

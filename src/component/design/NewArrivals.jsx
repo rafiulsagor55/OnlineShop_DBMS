@@ -1,7 +1,7 @@
 // NewArrivals.jsx
 import React, { useMemo, useState } from "react";
 import styles from "./TypeBasedItem.module.css";
-import sagorImage from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (5).png";
+import sagorImage from "../../assets/Avatar.png";
 import { Link } from "react-router-dom";
 
 const filterOptions = {

@@ -260,6 +260,57 @@ const ProductInputPage = () => {
     }
   };
 
+//More clean code
+//   const checkFile = (file) => {
+//   if (!file.type.match('image.*')) {
+//     throw new Error("Please select image.");
+//   }
+//   if (file.size > 2 * 1024 * 1024) {
+//     throw new Error("File size must be less than 2MB");
+//   }
+// };
+
+// const checkAspectRatio = (img) => {
+//   const { width, height } = img;
+//   if (Math.abs(width - height) > 5) {
+//     throw new Error("Image must have a 1:1 aspect ratio");
+//   }
+// };
+
+// const handleImageUpload = async (e) => {
+//   const files = Array.from(e.target.files);
+//   if (!newColor || files.length === 0) return;
+
+//   try {
+//     for (let file of files) {
+//       checkFile(file);
+
+//       const objectURL = URL.createObjectURL(file);
+//       const img = new Image();
+//       img.onload = async () => {
+//         URL.revokeObjectURL(objectURL); 
+//         checkAspectRatio(img);
+
+//         const base64String = await convertToBase64(file);
+//         setPreviews((prev) => ({
+//           ...prev,
+//           [newColor]: [...(prev[newColor] || []), base64String],
+//         }));
+//       };
+
+//       img.onerror = () => {
+//         URL.revokeObjectURL(objectURL);
+//         setErrorMessage("Error loading image");
+//       };
+
+//       img.src = objectURL;
+//     }
+//   } catch (error) {
+//     setErrorMessage(error.message);
+//   }
+// };
+
+
   // Add a color with the images to form data
   const handleAddColor = () => {
     if (!newColor) {

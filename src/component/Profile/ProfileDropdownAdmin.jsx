@@ -9,7 +9,7 @@ import {
   FiChevronDown,
   FiChevronUp,
 } from "react-icons/fi";
-import defaultAvatar from "/home/rafiul/Desktop/react project/one-to-one-chat/src/assets/Pasted image (2).png";
+import defaultAvatar from "../../assets/Avatar.png";
 import MyProfile from "./MyProfile";
 import EditProfile from "./EditProfile";
 import ChangePassword from "./ChangePassword";
