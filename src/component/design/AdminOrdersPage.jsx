@@ -191,7 +191,7 @@ const AdminOrdersPage = () => {
 
     setOrders(updatedOrders);
     setSelectedOrder(updatedOrders.find((order) => order.id === orderId));
-    showNotification(`Order ${orderId} status updated to ${newStatus}`);
+    // showNotification(`Order ${orderId} status updated to ${newStatus}`);
     setShowActionMenu(null);
   };
 
@@ -223,7 +223,7 @@ const AdminOrdersPage = () => {
 
     setOrders(updatedOrders);
     setSelectedOrder(updatedOrders.find((order) => order.id === orderId));
-    showNotification(`Order ${orderId} payment status updated to ${newPaymentStatus}`);
+    // showNotification(`Order ${orderId} payment status updated to ${newPaymentStatus}`);
   };
 
   const revertToOriginalState = (orderId) => {
@@ -1089,9 +1089,9 @@ const AdminOrdersPage = () => {
                       <select
                         className={styles.statusSelect}
                         value={selectedOrder.status}
-                        // onChange={(e) =>
-                        //   updateOrderStatus(selectedOrder.id, e.target.value)
-                        // }
+                        onChange={(e) =>
+                          updateOrderStatus(selectedOrder.id, e.target.value)
+                        }
                       >
                         <option value="Order Placed">New Order</option>
                         <option value="processing">Processing</option>
@@ -1120,12 +1120,12 @@ const AdminOrdersPage = () => {
                       >
                         <FiPrinter /> Confirm Update
                       </button>
-                      <button
+                      {/* <button
                         className={styles.actionButton}
                         onClick={handleEmailCustomer}
                       >
                         <FiMail /> Email
-                      </button>
+                      </button> */}
                       {selectedOrder.status === "cancelled" &&
                         selectedOrder.payment === "Paid" && (
                           <button
