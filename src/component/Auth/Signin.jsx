@@ -139,7 +139,7 @@ const Signin = () => {
               <span>OR</span>
             </div>
 
-            <GoogleOAuthProvider clientId="421406248780-c6pukobh1dr5blgsa7u4ee7l3luml5iu.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId="421406248780-qghqjnjo8kd14vukr7aivp52f0r3hjrs.apps.googleusercontent.com">
               <div className={styles.googleButton}>
                 <GoogleLogin
                   onSuccess={handleSuccess}
