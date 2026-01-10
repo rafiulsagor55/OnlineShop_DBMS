@@ -101,10 +101,15 @@ const Layout = () => {
   };
 
   const navItems = [
+    // {
+    //   icon: FaHome,
+    //   text: 'Dashboard',
+    //   link: ''
+    // },
     {
-      icon: FaHome,
-      text: 'Dashboard',
-      link: ''
+      icon: FaFileInvoiceDollar,
+      text: 'Orders',
+      link: '',
     },
     {
       icon: FaBox,
@@ -122,16 +127,16 @@ const Layout = () => {
       text: 'Add Product',
       link: 'add-product',
     },
-    {
-      icon: FaFileInvoiceDollar,
-      text: 'Orders',
-      link: 'orders',
-    },
-    {
-      icon: BsChatDotsFill,
-      text: 'Chat Box',
-      link: 'chatbox',
-    },
+    // {
+    //   icon: FaFileInvoiceDollar,
+    //   text: 'Orders',
+    //   link: 'orders',
+    // },
+    // {
+    //   icon: BsChatDotsFill,
+    //   text: 'Chat Box',
+    //   link: 'chatbox',
+    // },
     // {
     //   icon: FaUsers,
     //   text: 'Customers',

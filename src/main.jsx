@@ -267,7 +267,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "orders",
+        path: "",
         element: <AdminOrdersPage />,
       },
       {

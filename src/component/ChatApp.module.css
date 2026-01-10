@@ -429,11 +429,12 @@
 
 /* Deleted message styles */
 .deletedMessage {
-  background-color: #e9edef !important;
-  color: #919191 !important;
+  background-color: transparent !important;
+  color: #6c757d !important;
   font-style: italic;
   font-size: 14px;
   padding: 6px 10px !important;
+  border: #6c757d 2px solid;
 }
 
 .darkMode .deletedMessage {

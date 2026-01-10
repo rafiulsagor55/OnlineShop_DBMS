@@ -1089,9 +1089,9 @@ const AdminOrdersPage = () => {
                       <select
                         className={styles.statusSelect}
                         value={selectedOrder.status}
-                        onChange={(e) =>
-                          updateOrderStatus(selectedOrder.id, e.target.value)
-                        }
+                        // onChange={(e) =>
+                        //   updateOrderStatus(selectedOrder.id, e.target.value)
+                        // }
                       >
                         <option value="Order Placed">New Order</option>
                         <option value="processing">Processing</option>
