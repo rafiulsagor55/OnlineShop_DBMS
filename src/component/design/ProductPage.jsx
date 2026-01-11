@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef,useContext } from "react";
 import styles from "./ProductPage.module.css";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet } from "react-router-dom";
 import { useParams, useLocation } from "react-router-dom";
 import { FaCartArrowDown } from "react-icons/fa";
 import { HiShoppingBag } from "react-icons/hi2";
